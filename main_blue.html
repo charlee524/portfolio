@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>$cashTag Prototype </title>
+    <link rel="stylesheet" type="text/css" href="command.css"/>
+    <link rel="stylesheet" href="./jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="./command.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script> 
+    
+    
+    <script>
+    // This prototype will allow user to enter text and upon entering '$', it will open a security autocomplete popup. 
+    // This has been tested in UX Usability lab to see: 
+    //    1. is '$' the appropriate key to use for opening security autocomplete
+    //    2. would '$' opening security autocomplete interfere with entering $Amount  
+    //    3. visual appearance of the security autocomplete
+    
+        //global variables
+        let g_inputString;
+        let g_matches = [];
+        let g_matchesPrevLen=0;
+        
+        function init_global() {
+        	let g_inputString;
+        	let g_matches = [];
+        	let g_matchesPrevLen=0;
+        	g_choices = [];
+        	g_choices = g_choices_backup;
+        }
+        
+        function initialize()
+        {
+        	console.log("**** Start of initialize");
+        	g_choices_backup=g_choices;
+        }
+ 	     //check for '$' key pressed
+        function checkForCashTag(){
+        	let inputString = document.getElementById("ib_entry").value;
+        	var index = inputString.indexOf('$');
+        	if (index > -1){
+        		if (index === inputString.length-1){
+        		    openAutocompleteMenu(index);
+        		  	return true;
+        		}
+        	}
+			else {
+				return false;
+			}
+        }
+        //check for '$' key pressed
+        function checkForCashTag2(){
+        	let inputString = document.getElementById("ib_entry2").value;
+        	var index = inputString.indexOf('$');
+        	if (index > -1){
+        		if (index === inputString.length-1){
+        		    openAutocompleteMenu(index);
+        		  	return true;
+        		}
+        	}
+			else {
+				return false;
+			}
+        }
+        function openAutocompleteMenu(tagPos){
+	        let inputString =  document.getElementById("ib_entry").value;
+	        displayDropDown(tagPos);
+        }   
+             
+        function displayDropDown(tagPos){
+        	tagPos = (tagPos*10)+350;
+        	var x=document.createElement("DIV");
+	        x.setAttribute("id","dropdownMenu");
+	        x.setAttribute("position","absolute");
+	        
+	        document.getElementById("ibScreen").appendChild(x); 
+	        let i = tagPos.toString()+"px";
+	        document.getElementById("dropdownMenu").style.left = i; 
+	        displayInputRow();
+        }
+        
+        //display first row in the autocomplete dropdown
+        function displayInputRow(){
+        	console.log("displayInputRow()");
+            var amberInputType = document.createElement("INPUT");
+		   
+	        amberInputType.setAttribute("type","text");
+	        amberInputType.setAttribute("autocomplete","false");
+	        amberInputType.setAttribute("name","amberInputTypeName");
+	        amberInputType.value = "$";
+	        amberInputType.setAttribute("id","amberInputTypeId"); 
+	        
+	        var amberInput = document.createElement("DIV");
+	        amberInput.setAttribute("id","firstRowDiv");
+	    
+	        document.getElementById("dropdownMenu").appendChild(amberInput); 
+	        document.getElementById("firstRowDiv").appendChild(amberInputType); 
+	        document.getElementById("amberInputTypeId").focus();
+	
+	        var text = document.createElement("p");
+		    text.setAttribute("id","closeText");
+		    var node = document.createTextNode("Enter a security or ESC to close");
+		    text.appendChild(node);
+	        document.getElementById("firstRowDiv").appendChild(text); 
+	        
+	       //if inputting into amber entry in popup
+	       amberInputTypeId.addEventListener("input", function(){
+		    	let security='' ;
+       			g_inputString = document.getElementById("amberInputTypeId").value;
+       		    console.log("displayInputRow g_inputString:",g_inputString);
+	       		for (var i=1; i< g_inputString.length; i++){
+	       			console.log("displayInputRow",i,"g_inputString[i]:",g_inputString[i]);
+	       				security=security+g_inputString[i];
+	       		}
+	       		let securityUppcase = security.toUpperCase();
+	       		
+	       		filterSecurity(securityUppcase);
+	       		displayList(securityUppcase); 
+		    },false);
+		    //if ESC key is pressed
+			$(document).keyup(function(e){
+	      	  if (e.keyCode == 27){
+	      		console.log("ESC PRESSED");
+	      		amberInputType.setAttribute("visible","false");
+                let inputValue =	document.getElementById("amberInputTypeId").value;
+	      		var ibValue = document.getElementById("ib_entry").value;
+	      		var ibValueNew = ibValue.substr(0,ibValue.length-1);
+	      		console.log("IBVALUE:",ibValueNew, ibValue.length-1);
+	      		
+	      		ibValue = ibValueNew+ inputValue;
+	      		document.getElementById("ib_entry").value = ibValue;
+	      		
+	      		document.getElementById("dropdownMenu").remove();
+	      		document.getElementById("ib_entry").focus();
+	      		init_global();
+	      		
+	      	  }
+	       });
+        }
+        
+       function filterSecurity(security){
+       	    let numMatch=0;
+	       	g_matches=[]; 
+	          for (i=0; i<=g_choices.length-1;i++){
+       	    	if (~g_choices[i][0].toUpperCase().indexOf(security)){
+       	    		
+       	    		g_matches[numMatch]=[];
+       	    		g_matches[numMatch][0]=g_choices[i][0];
+       	    		g_matches[numMatch][1]=g_choices[i][1];
+       	    		numMatch++;
+       	    	}
+       	    	else {
+       	    		//console.log(i, "DOES NOT MATCH");
+       	    	}
+       	    	if (numMatch ==0){
+       	    		console.log("* dropdown should be empty");
+       	    	}
+       	    }
+       	    if (security.length >= 2){
+       	    	 	console.log("filterSecurity- CLEAR security:",security, " security.length",security.length, " g_matchesPrevLen:",g_matchesPrevLen," g_choices len:",g_choices.length, " g_matches len:",g_matches.length);
+	       	    	clearAllResults(g_matchesPrevLen);
+	       	}
+       	    g_matchesPrevLen = g_matches.length;
+       }
+       function clearAllResults(rowsToClear){
+       	    console.log("rowsToClear:",rowsToClear);
+       	    if (rowsToClear>10){
+       	    	rowsToClear = 10;
+       	    }
+       		for (var i=0; i<rowsToClear; i++){
+       			var child = document.getElementById("security");
+        	    document.getElementById("dropdownMenu").removeChild(child);
+       		}
+       }
+       function clearResult(preLen, newMatchLen){
+       		let numRemove = preLen - newMatchLen;
+       		console.log("prelen:",preLen," newMatchLen:",newMatchLen);
+       		for (var i=0; i<preLen; i++){
+       			console.log(i, "HELLO numRemove",numRemove);
+       			var child = document.getElementById("security");
+        	    document.getElementById("dropdownMenu").removeChild(child);
+       		}
+       		
+       }
+        //display the security list
+        function displayList(security){
+            console.log("displayList() g_matches.length:",g_matches.length, "inputString len:",g_inputString.length);
+        	var p1, p2, node, node2, node3, node4, securityDiv, ht, htStr;
+        	ht = 0;
+        	let numDisplay;
+        	
+        	if (g_matches.length >=10){
+        		numDisplay = 10;
+        	}
+        	else if (g_matches.length == 0){
+        		console.log("does not need to react");
+        		numDisplay = 1;
+        	}
+        	else{
+        		numDisplay = g_matches.length;
+        	} 
+        	
+        	console.log("**** displayList() numDisplay:",numDisplay);
+            if (numDisplay>=1){
+        	 for (var i=0 ; i<=numDisplay-1;i++){
+        		ht = (ht+60);
+        		htStr = (ht+"px").toString();
+        		document.getElementById("dropdownMenu").style.height = htStr;
+        		securityDiv = document.createElement("DIV");
+        		securityDiv.setAttribute("id","security"); 
+                securityDiv.setAttribute("data-index",i); 
+    
+        		document.getElementById("dropdownMenu").appendChild(securityDiv);
+        		//when user selects a security from drop down list
+        	    securityDiv.onclick=function(e){ 
+                	var index = parseInt( e.currentTarget.getAttribute("data-index"), 10 );
+					document.getElementById("dropdownMenu").remove();
+	      			document.getElementById("ib_entry").style.visibility = "hidden";
+	      			var entryOne = document.getElementsByClassName("ib_entryDIV")[0];
+	      			entryOne.style.visibility = "visible"; 
+	                document.getElementsByClassName("ib_entry_securityDIV")[0].style.visibility = "visible";
+	                var ibValue = document.getElementById("ib_entry").value;
+	      			var ibValueNew = ibValue.substr(0,ibValue.length-1);
+	      			document.getElementsByClassName("ib_entryDIV")[0].innerHTML = ibValueNew;
+	      		    document.getElementsByClassName("ib_entry_securityDIV")[0].innerHTML = "$"+ g_matches[index][0]+" ";
+				    init_global();
+				    //input at end of the returned security
+				    var input = document.createElement("INPUT");
+				    input.setAttribute("type","text");
+				    input.setAttribute("id","ib_entry2");
+				    input.setAttribute("oninput","checkForCashTag2()");
+				    input.setAttribute("onkeyup","inputKeyUpSelectSecurity(event)");
+				    input.value = " ";
+				    document.getElementById("parentDiv").appendChild(input);
+				    document.getElementById("ib_entry2").focus();
+        	    };
+        	    
+        		if(i == 0){
+        			securityDiv.setAttribute("id","security"); 
+        		}
+	            p1 = document.createElement("p");
+		        p1.setAttribute("id","securityP1");
+		        //DONT ADD 
+		        if (g_matches[i][0]=== undefined){
+		        	console.log(i," g_matches[i][0] is undefined", g_matches[i][0]);
+		        }
+		        node = document.createTextNode(g_matches[i][0]);  	
+		        p1.appendChild(node);
+		        securityDiv.appendChild(p1);
+		        	
+		        p2 = document.createElement("p");
+		        p2.setAttribute("id","securityDescriptionP1");
+		        node2 = document.createTextNode(g_matches[i][1]);
+		        p2.appendChild(node2);
+		        securityDiv.appendChild(p2);
+		       
+		     }
+		    }
+		    else {
+		    	console.log("more than 2 numDisplay",numDisplay);
+		    }
+		    
+		   g_choices=[];
+		    console.log("g_choices.length",g_choices.length);
+       	   // need to copy g_matches into the g_choices
+       	   for (i=0; i<g_matches.length;i++){
+       	   	    g_choices[i]=[];
+       	   		g_choices[i][0] = g_matches[i][0];
+       	        g_choices[i][1] = g_matches[i][1];
+       	   }
+       	   
+       	   
+       }
+        //used to update the chat entry onto chatlog when ESC from popup
+       function inputKeyUp(e){
+	       	e.which = e.which ||e.keyCode;
+	       	if (e.which ==13){
+	       		console.log("ENTER KEY");
+	       		var x=document.createElement("DIV");
+		        x.setAttribute("id","chatUpdate");
+		        x.setAttribute("position","absolute");
+		        document.getElementById("ibScreen").appendChild(x); 
+		        
+		        var name = document.createElement("p");
+		        name.setAttribute("id","chatUpdateName");
+		        name.setAttribute("position","absolute");
+		        var node1 = document.createTextNode("JANE SMITH");
+		        name.appendChild(node1); 
+		        x.appendChild(name);
+		        
+		        var contentParent = document.createElement("DIV");
+		        contentParent.setAttribute("id","chatUpdateContentParent");
+		        x.appendChild(contentParent);
+		        
+		        var time = document.createElement("DIV");
+		        time.setAttribute("class","chatUpdateTime");
+		        var node2 = document.createTextNode("08:53:18");
+		        time.appendChild(node2); 
+		        contentParent.appendChild(time);
+		        
+		        var content = document.createElement("DIV");
+		        content.setAttribute("class","chatUpdateContent");
+		        var node3 = document.createTextNode(document.getElementById("ib_entry").value);
+		        content.appendChild(node3); 
+		        contentParent.appendChild(content);
+		      
+				init_global();   
+				document.getElementById("ib_entry").value = "";     
+		    }
+       }
+       //used to update the chat entry onto chatlog when selecting security from popup
+	   function inputKeyUpSelectSecurity(e){
+	       	e.which = e.which ||e.keyCode;
+	       	if (e.which ==13){
+	       		console.log("ENTER KEY");
+	       		var x=document.createElement("DIV");
+		        x.setAttribute("id","chatUpdate");
+		        x.setAttribute("position","absolute");
+		        document.getElementById("ibScreen").appendChild(x); 
+		        
+		        var name = document.createElement("p");
+		        name.setAttribute("id","chatUpdateName");
+		        name.setAttribute("position","absolute");
+		        var node1 = document.createTextNode("JANE SMITH");
+		        name.appendChild(node1); 
+		        x.appendChild(name);
+		        
+		        var contentParent = document.createElement("DIV");
+		        contentParent.setAttribute("id","chatUpdateContentParent");
+		        x.appendChild(contentParent);
+		        
+		        var time = document.createElement("DIV");
+		        time.setAttribute("class","chatUpdateTime");
+		        var node2 = document.createTextNode("08:53:18");
+		        time.appendChild(node2); 
+		        contentParent.appendChild(time);
+		        
+		        var content = document.createElement("DIV");
+		        content.setAttribute("class","chatUpdateContent");
+		        var node3 = document.createTextNode(document.getElementsByClassName("ib_entryDIV")[0].value);
+		        content.appendChild(node3); 
+		        contentParent.appendChild(content);
+		      
+				init_global();   
+				document.getElementById("ib_entry").value = "";     
+		    }
+       }
+          
+    </script>
+</head>
+<body onload="initialize();">
+	<div id="ibScreen">
+		<div id ="composeEntry">
+			<input type="text" id="ib_entry" autocomplete="off" autofocus oninput="checkForCashTag()" onkeyup="inputKeyUp(event)"/>
+		</div>
+		<div id="parentDiv">
+			<div class="ib_entryDIV"></div>
+            <div class="ib_entry_securityDIV" > </div>
+
+	    </div> 
+    </div>
+
+</body>
+</html>
+
