@@ -1,0 +1,1213 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>BI Split Link Working</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+	<link rel="stylesheet" href = "styles/main.css">
+	<link rel="stylesheet" href = "styles/win7.css">
+	<link rel="stylesheet" href = "styles/desktop.css">
+	<link rel="stylesheet" href = "styles/menus.css">
+	<link rel="stylesheet" href = "styles/widgets.css">
+	<link rel="stylesheet" href = "styles/b1.css">
+	<link rel="stylesheet" href = "styles/bico.css">
+	<style>
+
+		.bico {
+			/* The BICO function's top level element */
+			
+		}
+		.bico .something {  
+			/* A transparent green box in front of the ABC function's background image */
+			position: absolute;
+			width: 130px;
+			height: 115px;
+			left: 0px;
+			top: 38px;
+			/*background-color: rgba(0, 255, 0, 0.4);*/
+	} 
+
+		.abc .something {  
+			/* A transparent green box in front of the ABC function's background image */
+			position: absolute;
+			width: 130px;
+			height: 115px;
+			left: 1px;
+			top: 38px;
+			background-color: rgba(0, 255, 0, 0.4);
+	} 
+ 
+	</style>
+</head>
+<body>
+	<script src="scripts/fontfaceobserver.js"></script>
+	<script src="scripts/lib.js"></script>
+	<script src="scripts/app.js"></script>
+	<script src="scripts/windows.js"></script>
+	<script src="scripts/tooltip.js"></script>
+	<script src="scripts/desktop.js"></script>
+	<script src="scripts/menus.js"></script>
+	<script src="scripts/easing.js"></script>
+	<script src="scripts/bb-content.js"></script>
+	<script src="scripts/b1-window.js"></script>
+	<script src="data/menus.js"></script>
+    <script src="scripts/bico.js"></script>
+	<script>
+	
+(function (){
+    window.myGlobal="A";
+	var ns = window[window.globalNamespaceName];
+	ns.B1WindowTemplate = ns.B1WindowTemplate || {};
+	var app = ns.B1WindowTemplate;
+	ns.PrototypeFunctions = (ns.PrototypeFunctions) ? ns.PrototypeFunctions : {};
+
+	document.oncontextmenu = null; // Comment this line if you don't need to right-click to inspect elements in the browser
+
+	// Two skeleton functions are defined, 'abc' and 'def', to demo switching between functions
+
+	/////////////// BICO Main Screen //////////////////////////////////////////////////////////////////////////////////////////
+
+	ns.PrototypeFunctions.bico = function (initData) {
+		// initData is an object that usually contains the property 'initialOwner', a reference to the containing window or pane
+		ns.PrototypeFunctions.bico.parent.constructor.apply(this, arguments);
+		this.title = 'Bloomberg Intelligence Company Primer';
+	};
+
+	ns.PrototypeFunctions.bico.BACKGROUND_IMAGE_PATH = 'images/b1-sample-function.png';
+
+	ns.extend(ns.PrototypeFunctions.bico, ns.BBContentView);
+
+	ns.PrototypeFunctions.bico.prototype.onDOMReady = function() {
+
+		// Tell the 'owner' (an instance of B1Window) to add a title bar menu button:
+		
+
+		// Add a title bar button
+		this.owner.addTitleBarButton( {text:'Send', numberGo:'66', id:'send'} );
+        
+        // (In order to open a title bar menu, this function needs to have 'getMenuDefinition' and 'onTitleBarMenuItemSelect' methods)
+		this.owner.addTitleBarMenuButton( {text:'Actions', numberGo:'98', menuId:'actions'} );
+		// Style the function:
+		this.el.classList.add('bico');
+
+		// Add a background image:
+		this.addBackgroundImage(ns.PrototypeFunctions.bico.BACKGROUND_IMAGE_PATH);
+
+		// Load an iPanel image:
+		this.owner.loadIPanelImage('images/b1-sample-ipanel.png');
+		
+		// Load hover image:
+		//this.owner.loadIPanelImage('images/x_tab_credit_hover.png');
+		
+		// Load hover tooltip image:
+		//this.owner.loadIPanelImage('images/x_tab_credit_tooltip.png');
+	};
+
+	ns.PrototypeFunctions.bico.prototype.getMenuDefinition = function(menuId) {
+		switch (menuId){
+			case 'options':
+			return [
+				'|ABC Option A|optionA',
+				'|ABC Option B|optionB',
+				'|ABC Option C|optionC',
+				'|ABC Option D|optionD',
+			];
+			break;
+			case 'actions':
+			return [
+				'|Option A|optionA',
+				'|Option B|optionB',
+				'|Option C|optionC',
+				'|Option D|optionD',
+			];
+			break;
+		}
+		return [];
+	};
+
+	
+
+	ns.PrototypeFunctions.bico.prototype.onTitleBarButtonClick = function (id, e) {
+		console.log('BICO got title bar button click: ' + id);
+	};
+
+	ns.PrototypeFunctions.bico.prototype.onImageLoaded = function(e){
+		
+		// Callback from 'addBackgroundImage'
+		if (e.target.getAttribute('src') === ns.PrototypeFunctions.bico.BACKGROUND_IMAGE_PATH){
+            
+			// Background image is loaded; put UI elements in front of it (this is anchor bar):
+			//this.anchor= ns.Views.create('div', 'anchor', this.el); 
+			//this.anchor.innerHTML = "1. BI Company Primer: AT&T";
+			
+			//Analyst Section
+            var analystSection = ns.Views.create('div',[], this.el);
+            analystSection.id = "analyst-section";
+            analystSection.innerHTML = `
+			    <div> </div>`;
+            
+            
+            // test section 
+            
+            
+            
+            //end test section 
+			// this is content being scrolled:
+			this.bicoScrollDiv = ns.Views.create('div', 'b1-bico-scroll', this.el); 
+
+			const HTML_TEMPLATE = `
+			    <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading"><a name="chap1">1. BI Company Primer: Valeant</a></div><div class="b1-bico-section-heading-bit-option"></div></div>
+                
+                <div class="b1-bico-subheading1">08/11/16</div>
+                 <div class="b1-bico-toc-financial-section">
+                  	<div class="b1-bico-table"> Table of Contents</div>
+                  	
+                  	<div class="b1-bico-toc-container">
+                    	<div class="b1-bico-toc-item-row">
+                    		<div class="b1-bico-table-heading"> Financial Review</div>
+                    	</div>
+                    	
+                        <div class="b1-bico-toc-item-row">
+                    		<div class="b1-bico-table-heading"> Topics</div>
+                    	</div>
+                    </div>  
+                    <div class="b1-bico-toc-container">
+                    	<div class="b1-bico-toc-item-row">
+                    		<div class ="b1-bico-table-item-down"></div> <div class="b1-bico-toc-item-cell" >Revenue</div>
+                    	</div>
+                    	
+                        <div class="b1-bico-toc-item-row">
+                    		<div class ="b1-bico-table-item-diamond"></div> <div class="b1-bico-toc-item-cell"> Management</div>
+                    	</div>
+                    </div>
+                    
+                    <div class="b1-bico-toc-container">
+                    	<div class="b1-bico-toc-item-row">
+                    		<div class ='b1-bico-table-item-down'></div> <div class='b1-bico-toc-item-cell'> Margin & Profit </div> 
+                    	</div>
+                    	<div class="b1-bico-toc-item-row">
+                    		<div class ="b1-bico-table-item-down"></div> <div class="b1-bico-toc-item-cell">Product Overview</div>
+                    	</div>
+                    </div>
+                    
+                    <div class="b1-bico-toc-container">
+                    	<div class="b1-bico-toc-item-row">
+                    		<div class ="b1-bico-table-item-down"></div> <div class="b1-bico-toc-item-cell"> Earning Review</div> 
+                    	</div>
+                    	<div class="b1-bico-toc-item-row">
+                    		<div class ="b1-bico-table-item-down"></div> <div class="b1-bico-toc-item-cell"> Credit Analysis/Debt</div>
+                    	</div>
+                    </div>
+                    
+                 	<div class="b1-bico-table-heading-2">Financial Data</div>
+	                <div class="b1-bico-table-item-2"> Earning Analyzer | BI \u00BB </div>                 
+                    
+                 </div>
+  
+
+                 <p>(Bloomberg Intelligence) -- Valeant Pharmaceuticals International Inc.'s new CEO, Joseph Papa, is trying to lead a turnaround, pay down debt and restore investor confidence. Dermatology and gastrointestinal franchises are showing signs of recovery on volume but revenue is hurt by discounts. Management maintained 2016 guidance, which is a high bar, based on 1H revenue and EPS. The company may continue to divest non-core assets to meet debt repayments. Damages from an continuing federal probe that may threaten debt repayments are an overhang.
+                </p>
+                 <div class="b1-blank-row"></div>                                 
+                
+                <p> 	Dermatology and gastrointestinal franchise volume is rebounding but revenue has declined due to lower average realized prices under the Walgreens agreement. Debt repayments remain an overhang as credit covenants are linked to Valeant's Ebitda.</p>
+                <div class="b1-blank-row"></div>
+                <div style="color:#989898;">Key Points:</div>
+                <ul>
+                  <li>Valeant Sales Growth Hindered by Rebates, Walgreens Deal</li>
+                  <li>Papa May Convince Investors But Lacks Specialty Expertise</li>
+                  <li>Valeant's GI Unit Leads Prescription Volume Turnaround in 2Q</li>
+                  <li>Walgreens Deal Pressures Valeant Profitability, May Reverse</li>
+                  <li>Valeant's Amortization Needed to Meet Ebitda Guidance, Covenants Financial Review</li>
+                </ul>
+			    
+			   div class="b1-blank-row"></div>
+			    
+			    <div class= "b1-bico-section-chapter"><a name="chap2-Financial-Review"> Financial Review</a></div>
+			    <div class= "b1-bico-section-chapter-subheading"> Revenue Analysis</div>
+			    <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">2. Valeant Sales Growth Hindered by Rebates, Walgreens Deal</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap2">08/31/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                
+                <div class="b1-bico-chart2-section">  </div>
+                <p>   Valeant's sales have been curtailed by negative average selling prices under its arrangement with Walgreens and higher rebates but management has indicated that the Salix franchise will recover and profitability started to improve in August. The company maintained revenue guidance of $9.9-$10.1 billion in 2016. Valeant will now report under three segments: Bausch & Lomb/International, which is expected to have the most growth, Branded Rx and U.S. Diversified Products that will generate cash.
+                </p>
+                <div class="b1-blank-row"></div>
+                <p>     
+                     Regions: More than 60% of Valeant's revenue is from the U.S., while Europe and the Middle East make up 16% of revenue and Asia comprises 11%.
+                </p>
+               
+                <div class="b1-blank-row"></div>
+			    
+			    <div class= "b1-bico-section-chapter-subheading"> Margin Analysis</div>
+			    <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">3. Valeant Margins Pressured by Managed Care, Restructuring</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading"><a name="chap3">08/31/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-chart3-section"></div>
+                <p>     
+                     Valeant's operating margins may continue to take a hit in 2016 as the company can no longer rely on growth through price increases or through the acquisition of new products. The company plans to reduce R&D spending in 2H, which is already only at 4.5% if sales and will offset opportunities for pipeline growth. Valeant has been building its managed-care team to secure formulary status due to competition and price pressure on late-lifecycle products, which will drive SG&A.
+                </p>
+                <div class="b1-blank-row"></div>
+                <p>     
+                     Peer Comparison: Valeant's adjusted operating margin tops the peer median. Only Allergan's adjusted operating margin exceeds Valeant's.
+                </p>
+                
+                <div class="b1-blank-row"></div>
+			    
+			    <div class= "b1-bico-section-chapter-subheading"> Earnings Review</div>
+			    <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">4. Valeant Has Much Work Ahead in 2H to Meet Guidance: 2Q Review</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading"><a name="chap4">08/09/16</a></div>
+                <div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-subheading-container">
+                	<div class="b1-bico-subheading-item" style="color:#797E85;">Main Report </div>
+                	<div class="b1-bico-subheading-item" style="color:#53B2F5"> Valeant Earnings Summary</div>
+                </div>
+                <div class="b1-blank-row"></div>
+                <div class="b1-bico-toc-financial-section">
+                 	<div class="b1-bico-key-points-heading">Key Points:</div>
+	                <ul class="b1-bico-key-point-list" >
+	                  <li id="b1-bico-key-points-drilldown"><span id="drillEE" title="Click here for further analysis.&#10;Shortcut: EE&lt;Go&gt">
+	                                                        Adjusted Ebitda Was Only 43% of 2016 Target, Based on Guidance - EE \u00BB</span>
+	                        <div id="pipeEE"></div> <div id="popoutEE" title="Click for further analysis in a new window.&#10;Shortcut: EE&lt;Go&gt"></div> 
+	                                                  <div id="popoutEE_2" title="Click for further analysis in a new window.&#10;Shortcut: EE&lt;Go&gt"></div>
+	                  </li>
+	                                                  
+	                  
+	                  
+	                  <li id="b1-bico-key-points-drilldown"><span id="drillBI1" title="Click here for further analysis.&#10;Shortcut: BI GNRPG EB&lt;Go&gt | 1251-2-Q-992614496 | USD | 62461&lt;Go&gt">
+	                                                        Slower Recovery in Dermatology Drags on 2Q Revenue - BI GNRPG EB \u00BB</span>
+	                        <div id="pipeBI1"></div><div id="popoutBI1" title="Click for further analysis in a new window.&#10;Shortcut: BI GNRPG EB&lt;Go&gt | 1251-2-Q-992614496 | USD | 62461&lt;Go&gt"> </div>
+	                                                <div id="popoutBI1_2" title="Click for further analysis in a new window.&#10;Shortcut: BI GNRPG EB&lt;Go&gt | 1251-2-Q-992614496 | USD | 62461&lt;Go&gt"> </div>
+	                 </li>
+					  
+					  <li id="b1-bico-key-points-drilldown"><span id="drillFA" title="Click here for further analysis.&#10;Shortcut: FA&lt;Go&gt | 1251-2-Q-992614496 | USD | 62461 &lt;Go&gt">
+					                                        Xifaxan Sales Rose 36% Year-Over-Year, Missing Consensus - FA \u00BB</span> 
+					        <div id="pipeFA" ></div> <div id="popoutFA" title="Click for further analysis in a new window.&#10;Shortcut: FA&lt;Go&gt"></div>
+					                                 <div id="popoutFA_2" title="Click for further analysis in a new window.&#10;Shortcut: FA&lt;Go&gt"></div>
+					  </li>
+					  
+					  
+					  <li id="b1-bico-key-points-drilldown"><span id="drillBI2" title="Click here for further analysis.&#10;Shortcut: BI GNRPG EB |1251-2-Q-992614496|Q6|#992614496|USD|L6433 &lt;Go&gt">
+					                                        Valeant Committed to Paying Down $1.7 Billion in Permanent Debt in 2016 It's Paid $1.3 Billion to Date - BI GNRPG EB \u00BB</span>
+					         <div id="pipeBI2"></div><div id="popoutBI2" title="Click here for further analysis in a new window.&#10;Shortcut: BI GNRPG EB |1251-2-Q-992614496|Q6|#992614496|USD|L6433 &lt;Go&gt"></div>
+					                                 <div id="popoutBI2_2" title="Click here for further analysis in a new window.&#10;Shortcut: BI GNRPG EB |1251-2-Q-992614496|Q6|#992614496|USD|L6433 &lt;Go&gt"></div>
+					                 </li>
+	                </ul>
+	                <table id="b1-optionD-grid">
+	                	<tr >
+	                		<td class="column1" bgcolor="#191919" href="#" title="Click here for further analysis.&#010;Shortcut: EE&lt;Go&gt | 1251-2-Q-992614496 | USD | 62461 &lt;Go&gt"> <div id="drillEE_D" style="display:flex;" > Adjusted Ebitda Was Only 43% of 2016 Target, Based on Guidance - EE </div></td>
+	                		<td id="column2a" bgcolor="#191919" href="#" title="Click for further analysis in a new window.&#10;Shortcut: EE&lt;Go&gt"> <div id="popoutEE_D"></div></td>
+	                	</tr>
+	                	<tr>
+	                		<td class="column1" bgcolor="#191919" href="#" title="Click for further analysis.&#10;Shortcut: BI GNRPG EB |1251-2-A-992614496|A6|#992614496|USD|L6433&lt;Go&gt"> <div id="drillBI1_D" style="display:flex;" >Slower Recovery in Dermatology Drags on 2Q Revenue - BI GNRPG EB </div></td>
+	                		<td id="column2b" bgcolor="#191919" href="#" title="Click for further analysis in a new window.&#10;Shortcut: BI GNRPG EB |1251-2-A-992614496|A6|#992614496|USD|L6433&lt;Go&gt"> <div id="popoutBI1_D" ></div> </td>
+	                	</tr>
+	                	<tr>
+	                		<td class="column1" bgcolor="#191919" href="#" title="Click here for further analysis.&#010;Shortcut: FA&lt;Go&gt | 1251-2-Q-992614496 | USD | 62461 &lt;Go&gt"> <div id="drillFA_D" style="display:flex;" >Xifaxan Sales Rose 36% Year-Over-Year, Missing Consensus - FA</div></td>
+	                		<td id="column2c" bgcolor="#191919" href="#" title="Click for further analysis in a new window.&#10;Shortcut: FA&lt;Go&gt"> <div id="popoutFA_D"> </div></td>
+	                	</tr>
+	                	<tr>
+	                		<td class="column1" bgcolor="#191919" href="#" title="Click here for further analysis.&#10;Shortcut: BI GNRPG EB |1251-2-A-992614496|A6|#992614496|USD|S6421&lt;Go&gt"> <div id="drillBI2_D" style="display:flex;">Valeant Committed to Paying Down $1.7 Billion in Permanent Debt in 2016 It's Paid $1.3 Billion to Date - BI GNRPG EB</div> </td>
+	                		<td id="column2d" bgcolor="#191919" href="#" title="Click here for further analysis in a new window.&#10;Shortcut: BI GNRPG EB |1251-2-A-992614496|A6|#992614496|USD|S6421 &lt;Go&gt"> <div id="popoutBI2_D" > </div></td>
+	                	</tr>
+	                </table>
+                    <div class="b1-bico-key-points-heading">Additional Resources:</div>
+	                <ul class="b1-bico-key-point-list2" >
+	                  <li id="b1-bico-key-points-drilldown"><span id="drillBI3" title="Click here for further analysis.&#10;Shortcut: BI GNRPG EB|1251-2-A-992614496|A6|#992614496|USD&lt;Go&gt">Analyzer - BI GNRPG EB \u00BB</span>
+	                         <div id="pipeBI3"></div> <div id="popoutBI3" title="Click here for further analysis in new window.&#10;Shortcut: BI GNRPG EB|1251-2-A-992614496|A6|#992614496|USD&lt;Go&gt"> </div>
+	                                                  <div id="popoutBI3_2" title="Click here for further analysis in new window.&#10;Shortcut: BI GNRPG EB|1251-2-A-992614496|A6|#992614496|USD&lt;Go&gt"> </div></li>
+	                  
+	                  <li id="b1-bico-key-points-drilldown"><span id="drillNSN" title="Click here for further analysis.&#10;Shortcut: NSN OGBL8A3RXUKG&lt;Go&gt">Earnings Release - NSN \u00BB</span>
+	                        <div id="pipeNSN"></div> <div id="popoutNSN" title="Click here for further analysis in new window.&#10;Shortcut: NSN OGBL8A3RXUKG&lt;Go&gt"> </div>
+	                                                 <div id="popoutNSN_2" title="Click here for further analysis in new window.&#10;Shortcut: NSN OGBL8A3RXUKG&lt;Go&gt"> </div>
+	                        </li>
+	                  
+	                  <li id="b1-bico-key-points-drilldown"><span id="drillDOCC" title="Click for further analysis.&#10;Shortcut: DOCC&lt;Go&gt CF FS000000002312731650 &lt;Go&gt">Earnings Call Transcript - DOCC \u00BB</span>
+	                       <div id="pipeDOCC"></div><div id="popoutDOCC" title="Click for further analysis in new window.&#10;Shortcut: DOCC&lt;Go&gt CF FS000000002312731650 &lt;Go&gt"> </div>
+	                                                <div id="popoutDOCC_2" title="Click for further analysis in new window.&#10;Shortcut: DOCC&lt;Go&gt CF FS000000002312731650 &lt;Go&gt"> </div>
+	                       </li>
+	                </ul>
+	                <table id="b1-optionD-grid2">
+	                	<tr >
+	                		<td class="column1" bgcolor="#191919" href="#" title="Click here for further analysis.&#10;Shortcut: BI GNRPG EB|1251-2-A-992614496|A6|#992614496|USD&lt;Go&gt" > <div id="drillBI3_D" style="display:flex;"> Analyzer - BI GNRPG EB </div></td>
+	                		<td id="column2e" bgcolor="#191919" href="#" title="Click here for further analysis.&#10;Shortcut: BI GNRPG EB|1251-2-A-992614496|A6|#992614496|USD&lt;Go&gt"> <div id="popoutBI3_D" ></div></td>
+	                	</tr>
+	                	<tr >
+	                		<td class="column1" bgcolor="#191919" href="#" title="Click here for further analysis.&#10;Shortcut: NSN OGBL8A3RXUKG&lt;Go&gt"> <div id="drillNSN_D" style="display:flex;"> Earnings Release - NSN </div></td>
+	                		<td id="column2f" bgcolor="#191919" href="#" title="Click here for further analysis in new window.&#10;Shortcut: NSN OGBL8A3RXUKG&lt;Go&gt"> <div  id="popoutNSN_D"></div></td>
+	                	</tr>
+	                	<tr >
+	                		<td class="column1" bgcolor="#191919" href="#" title="Click for further analysis.&#10;Shortcut: DOCC&lt;Go&gt CF FS000000002312731650 &lt;Go&gt"> <div id="drillDOCC_D" style="display:flex;"> Earnings Call Transcript - DOCC </div></td>
+	                		<td id="column2g" bgcolor="#191919" href="#"  title="Click for further analysis in new window.&#10;Shortcut: DOCC&lt;Go&gt CF FS000000002312731650 &lt;Go&gt"> <div  id="popoutDOCC_D" ></div></td>
+	                	</tr>
+	                </table>
+                 </div>
+                <p>     
+                     Valeant has maintained its 2016 guidance despite a less-than-stellar 2Q on revenue and EPS, which sets the company up for what may be a difficult 2H. The dermatology and gastrointestinal franchises were still in a state of recovery because of a negative average selling price, which was corrected in early August, as well as higher rebates. The divestiture of some assets during 2Q and stated consideration of another $2 billion would help Valeant pay pay down debt and remove a major difficulty.
+				</p>
+                <div class="b1-blank-row"></div>
+                <div class="b1-blank-row"></div>
+                <div class="b1-blank-row"></div>
+                <div class="b1-blank-row"></div>
+                
+                <div class= "b1-bico-section-chapter"> Topics</div>
+			    <div class= "b1-bico-section-chapter-subheading"> Management</div>
+			    
+                <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">5. Papa May Convince Investors But Lacks Specialty Expertise</div><div class="b1-bico-section-heading-bit-option"></div></div>
+       
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap5">10/24/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-chart5-section">  </div>             
+                <p>                                                        
+                     CEO Joseph Papa may have the ability to restore investor confidence in Valeant, given his record at Perrigo. Still, Papa lacks experience in the specialty pharmaceutical business, which needs a revival at Valeant. The board may have opted for leadership skills rather than experience with growth, which is a longer-term goal. Most of Perrigo's business is in consumer health. Valeant's consumer business is now part of the durable growth unit and is 13% of Valeant's total business.
+                </p>
+                <div class="b1-blank-row"></div>
+                <p> 
+                	 Papa has deal experience with a tax inversion through the acquisition of Elan in 2013. He was previously chairman and CEO of Cardinal Health and president and COO of Watson.
+                 </p>
+            	
+                <div class="b1-blank-row"></div>
+                
+			    <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">6. New Management to Lead Valeant Turnaround Without Acquisitions</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap6">10/23/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+              
+                <div class="b1-bico-chart6-section">  </div>
+                <p>     
+                     A shift in management is a step in the right direction for Valeant Pharmaceuticals as the drugmaker attempts to restore investor confidence and return to growth without relying on acquisitions. Since Joseph Papa took the helm as CEO, the company has appointed a new general counsel, adopted a new business strategy and named Paul Herendeen as CFO. Herendeen, who brings experience from Zoetis and Warner Chilcott, replaces Robert Rosiello, who worked with ex-CEO Michael Pearson at McKinsey and led the merger practice.
+				</p>
+				
+                <div class="b1-blank-row"></div>
+                <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">7. New CEO Papa Could Help Valeant's Recovery, Given Perrigo Record</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap6">10/23/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+              
+                <div class="b1-bico-chart7-section">  </div>
+                <p>     
+                     Newly appointed CEO Joseph Papa may be able to help Valeant recover given his track record at Perrigo. Prior to Papa's start at Perrigo, the company's revenue and adjusted EPS grew 3% annually. Starting in 2006, when Papa took the helm, Perrigo had 15% annual revenue growth. Some of the growth was driven by M&A, which still begs the question if he can reinstate organic growth at Valeant as the company pays off debt.
+				</p>
+				<div class="b1-blank-row"></div>
+				<p>
+					Perrigo beat company guidance on adjusted EPS seven out of 10 years during Papa's tenure, which suggests he is conservative or sets realistic targets. The company also beat quarterly analyst estimates on adjusted EPS by an average 2.7%.
+				</p>
+				<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                <div class="b1-blank-row"></div>
+
+			    <div class= "b1-bico-section-chapter-subheading">Product Overview</div>
+			    <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">8. Valeant's GI Unit Leads Prescription Volume Turnaround in 2Q</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap8">09/30/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+              
+                <div class="b1-bico-chart8-section">  </div>
+                <p>     
+                     Valeant's three major core areas saw branded prescription volume rebound in 2Q off 1Q lows. This is the first time since the Philidor fallout in 4Q15 that all three units have grown in unison. Total GI scripts led the charge and were up 4.1% sequentially, followed by branded ophthalmology at 3.3%, then branded dermatology at 2.9%. This is a good start to Valeant's recovery, though discounts forfeited in order to boost volume still remain a large overhang on average selling price.
+				</p>
+				 <div class="b1-blank-row"></div>
+				<p>
+					GI volume includes both branded and generic drugs. The GI charge was lead by Apriso, Xifaxan and generic Zegerid. Valeant claims it has remedied any negative average selling prices on its products and expects profitability on its drugs to improve in 3Q.
+				</p>
+				<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+				<div class="b1-blank-row"></div>
+				<div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">9. Valeant's Key Dermatology Products Support Volume Rebound in 2Q</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap9">08/11/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-chart9-section">  </div>
+                <p>     
+                     Major branded drugs in Valeant's dermatology portfolio had a rebound in prescription volume in 2Q. Volume of high-margin drugs such as Solodyn, Jublia and Retin-A returned from lows, with Retin-A and Solodyn up 22%, and Jublia 5% higher. This is likely the result of a reinvigorated Walgreens push, but it comes with significant price discounting. That means organic revenue growth may be muted despite the uptick in volume.
+                </p>
+                <div class="b1-blank-row"></div>
+                <p>     
+                     Companies Impacted: Valeant says it has remedied negative ASP's on its products. It has also hired a third party to handle prior authorizations to improve the patient and physician experience and launched a coupon program. Collectively Valeant expects these will improve profitability on its drugs starting in 3Q.
+                </p>
+                <div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                <div class="b1-blank-row"></div>
+                <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">10. Walgreens Deal Pressures Valeant Profitability, May Reverse</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap10">08/16/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-chart10-section">  </div>
+                <p>     
+                     Valeant may start to recoup losses from its Walgreens deal, under which it had sent prescriptions to the patient before the prior authorization was approved, sometimes leaving the company to pick up the cost, dragging the average selling price down. A third-party vendor took over the process and launched a new prior authorization process on Aug. 4, which should improve the average selling price on dermatology products over time. Patients should pay their co-pay to cover the cost of the prescription.
+                </p>
+                <div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                <div class="b1-blank-row"></div>
+			    <div class= "b1-bico-section-chapter-subheading">Wireless</div>
+			    <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">11. Valeant's Contrave Deal May Be Big Mistake Given Obesity Metrics</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap11">08/30/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-chart11-section">  </div>
+                <p>     
+                     Valeant's acquisition of the Canadian rights to obesity drug Contrave may not be the best move for the company that needs to focus on paying down debt and organic growth. Novo Nordisk's Saxenda has been the dominant drug in a declining branded obesity market. Valeant lacks marketing expertise in metabolic diseases and obesity. The regulatory environment is also difficult and Valeant will still need to work with Health Canada for approval.
+				</p>
+				<div class="b1-blank-row"></div>
+				<p>     
+                     Symphony Health data show that the total retail prescription dollars of Orexigen's Contrave have fallen 4% over the past 12 weeks. Through 2Q, Contrave prescriptions were up a mere 4% vs. Saxenda's 51% gain.
+				</p>
+				<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+				<div class="b1-blank-row"></div>
+				<div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">12. Valeant's Brodalumab Faces Tough Competition on Safety Profile</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap12">08/12/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-chart12-section">  </div>
+                <p>     
+                     Valeant's brodalumab, recommended for approval, with risk management for side effects, to treat moderate to severe plaque psoriasis by a panel advising the FDA, will face tough competition on safety concerns, including suicide, seen in trials. The majority of panel members voted for psychiatric assessments, a patient registry and a blackbox warning on suicide that will limit use, especially since other options don't carry the same concern and dermatologists aren't used to dealing with suicide risks.
+				</p>
+				<div class="b1-blank-row"></div>
+				<p>
+					Brodalumab has a PDUFA date on Nov. 16.
+				</p>
+				<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+     			<div class="b1-blank-row"></div>
+     			<div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">13. Oral Relistor Approval May Give Valeant a $1.3 Billion Boost</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap13">08/12/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-chart13-section">  </div>
+                <p>     
+                     Oral Relistor for opioid-induced constipation (OIC) in adults with chronic non-cancer pain may have peak sales potential of $1.3 billion by 2023, based on comments from original developer Salix. This assumes there are 30 million cancer patients on opioids, that 41% have OIC and the tablet is priced at $12. The OIC market is growing in-line with the opioid epidemic and represents a sizeable opportunity for Valeant but the company will need to compete against entrenched options.Oral Relistor for opioid-induced constipation (OIC) in adults with chronic non-cancer pain may have peak sales potential of $1.3 billion by 2023, based on comments from original developer Salix. This assumes there are 30 million cancer patients on opioids, that 41% have OIC and the tablet is priced at $12. The OIC market is growing in-line with the opioid epidemic and represents a sizeable opportunity for Valeant but the company will need to compete against entrenched options.
+				</p>
+				<div class="b1-blank-row"></div>
+				<p>
+					Companies Impacted: Consensus expects Relistor to bring in $104 million in 2017 revenue. Valeant plans to launch the product in 3Q. The oral form may be preferred to the current subcutaneous injection.
+				</p>
+				<div class="b1-blank-row"></div>
+			    <div class= "b1-bico-section-chapter-subheading">Mexico Expansion</div>
+			    <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">14. Salix Franchise Sale at a Loss, But May Bring Much-Needed Cash</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap14">10/25/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-chart14-section">  </div>
+                <p>     
+                     A report that Valeant may be selling its Salix gastrointestinal franchise to Takeda for $10 billion may be welcome news for the company that is struggling to meet guidance and pay off more than $30 billion in debt. Yet the sale would be at a loss, since Valeant bought the company for a total enterprise value of $15.8 billion in early 2015. While the cash may help Valeant restore investor confidence regarding debt payments, it removes lead product Xifaxan, which was a driver of growth.
+				</p>
+				<div class="b1-blank-row"></div>
+				<p>
+					Companies Impacted: Takeda's possible offer would value the franchise at about 8x 2015 sales, which is in-line with deals in the sector in the past year. Takeda is said to be offering $8.5 billion in cash and future royalty payments.
+				</p>
+				<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+				<div class="b1-blank-row"></div>
+			    <div class= "b1-bico-section-chapter-subheading">Spectrum</div>
+			    <div class="b1-bico-section-heading-row"><div class="b1-bico-section-heading">15. Valeant's Amortization Needed to Meet Ebitda Guidance, Covenants</div><div class="b1-bico-section-heading-bit-option"></div></div>
+                <div class="b1-bico-subheading-row"><div class="b1-bico-subheading" ><a name="chap15">09/06/16</a></div>
+                	<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+                </div>
+                <div class="b1-bico-chart15-section">  </div>
+                <p>     
+                     Valeant was carrying $23 billion in intangible assets as of Dec. 31, which will allow for significant amortization expenses in future years and leaves the option for further impairment. With a credit facility amendment that modified what Valeant can add back to adjusted Ebitda, it should be able to meet the amended interest coverage ratio of 2x pro forma adjusted Ebitda-to-pro forma interest. To do that, it needs about $986 million in Ebitda in 3Q, based on 2Q interest and added interest expense.
+				</p>
+				<div class="b1-blank-row"></div>
+				<p>
+					In 2015, Valeant added back $2.4 billion in amortization and impairments to its net income, boosting adjusted EPS to $8.14 a share from an 85-cent GAAP loss. Based on a 12-month trailing adjusted Ebitda, Valeant will have an increasingly tough time meeting its interest coverage ratio.
+				</p>
+				<div class="b1-bico-top"> <a href='#chap1' style="text-decoration:none; color:#53B2F5; padding-right:15px;">Return to Top</a></div>
+				<div class="b1-blank-row"></div>
+				<div style="color:#A26100;margin-left:5px;" >To contact the analyst for this research:</div>
+				<div class="b1-bico-contact-container" style="margin-left:5px;">
+				<div style="color:#A26100;"> John Butler at </div> <div style="color:#53B2F5; margin-left:5px;"> jbutler51@bloomberg.net</div> </div>
+				<div class="b1-blank-row"></div>
+				<div class="b1-blank-row"></div>
+			`;
+
+			this.bicoScrollDiv.innerHTML = HTML_TEMPLATE;
+			//this.bicoScrollDiv.addEventListener("scroll",handleScroll);
+			
+		//	if (this.owner.selectedSecurity){
+		//		this.loadSecurity(this.owner.selectedSecurity);
+		//	}
+		}
+		//KEY POINTS
+		//add event listener to clicking on drill down section
+		document.getElementById('drillEE').addEventListener('click', this.drillDown.bind(this, 'EE'));
+		document.getElementById('drillBI1').addEventListener('click', this.drillDown.bind(this, 'BI1'));
+		document.getElementById('drillFA').addEventListener('click', this.drillDown.bind(this, 'FA'));
+		document.getElementById('drillBI2').addEventListener('click', this.drillDown.bind(this, 'BI2'));
+	
+	    document.getElementById('popoutEE').addEventListener('click', this.popOut.bind(this, 'EE'));
+		document.getElementById('popoutBI1').addEventListener('click', this.popOut.bind(this, 'BI1'));
+		document.getElementById('popoutFA').addEventListener('click', this.popOut.bind(this, 'FA'));
+		document.getElementById('popoutBI2').addEventListener('click', this.popOut.bind(this, 'BI2'));
+		
+		document.getElementById('popoutEE_2').addEventListener('click', this.popOut.bind(this, 'EE'));
+		document.getElementById('popoutBI1_2').addEventListener('click', this.popOut.bind(this, 'BI1'));
+		document.getElementById('popoutFA_2').addEventListener('click', this.popOut.bind(this, 'FA'));
+		document.getElementById('popoutBI2_2').addEventListener('click', this.popOut.bind(this, 'BI2'));
+		
+		//table grid
+		document.getElementById('drillEE_D').addEventListener('click', this.drillDown.bind(this, 'EE'));
+		document.getElementById('drillBI1_D').addEventListener('click', this.drillDown.bind(this, 'BI1'));
+		document.getElementById('drillFA_D').addEventListener('click', this.drillDown.bind(this, 'FA'));
+		document.getElementById('drillBI2_D').addEventListener('click', this.drillDown.bind(this, 'BI2'));
+	
+	/*    document.getElementById('popoutEE_D').addEventListener('click', this.popOut.bind(this, 'EE'));
+		document.getElementById('popoutBI1_D').addEventListener('click', this.popOut.bind(this, 'BI1'));
+		document.getElementById('popoutFA_D').addEventListener('click', this.popOut.bind(this, 'FA'));
+		document.getElementById('popoutBI2_D').addEventListener('click', this.popOut.bind(this, 'BI2')); */
+		
+        //ADDITIONAL RESOURCES
+        document.getElementById('drillBI3').addEventListener('click', this.drillDown.bind(this, 'BI3'));
+		document.getElementById('drillNSN').addEventListener('click', this.drillDown.bind(this, 'NSN'));
+		document.getElementById('drillDOCC').addEventListener('click', this.drillDown.bind(this, 'DOCC'));
+	
+	    document.getElementById('popoutBI3').addEventListener('click', this.popOut.bind(this, 'BI3'));
+		document.getElementById('popoutNSN').addEventListener('click', this.popOut.bind(this, 'NSN'));
+		document.getElementById('popoutDOCC').addEventListener('click', this.popOut.bind(this, 'DOCC'));
+		
+		document.getElementById('popoutBI3_2').addEventListener('click', this.popOut.bind(this, 'BI3'));
+		document.getElementById('popoutNSN_2').addEventListener('click', this.popOut.bind(this, 'NSN'));
+		document.getElementById('popoutDOCC_2').addEventListener('click', this.popOut.bind(this, 'DOCC'));
+        //table grid
+        document.getElementById('drillBI3_D').addEventListener('click', this.drillDown.bind(this, 'BI3'));
+		document.getElementById('drillNSN_D').addEventListener('click', this.drillDown.bind(this, 'NSN'));
+		document.getElementById('drillDOCC_D').addEventListener('click', this.drillDown.bind(this, 'DOCC'));
+		
+	/*	document.getElementById('popoutBI3_D').addEventListener('click', this.popOut.bind(this, 'BI3'));
+		document.getElementById('popoutNSN_D').addEventListener('click', this.popOut.bind(this, 'NSN'));
+		document.getElementById('popoutDOCC_D').addEventListener('click', this.popOut.bind(this, 'DOCC')); */
+		
+		document.getElementById('column2a').addEventListener('click', this.popOut.bind(this, 'EE'));
+		document.getElementById('column2b').addEventListener('click', this.popOut.bind(this, 'BI1'));
+		document.getElementById('column2c').addEventListener('click', this.popOut.bind(this, 'FA'));
+		document.getElementById('column2d').addEventListener('click', this.popOut.bind(this, 'BI2'));
+		document.getElementById('column2e').addEventListener('click', this.popOut.bind(this, 'BI3'));
+		document.getElementById('column2f').addEventListener('click', this.popOut.bind(this, 'NSN'));
+		document.getElementById('column2g').addEventListener('click', this.popOut.bind(this, 'DOCC'));
+		changeStyle(window.myGlobal);
+		document.querySelector('.b1-bico-scroll').scrollTop = 1575;
+	
+	};
+		ns.PrototypeFunctions.bico.prototype.onTitleBarMenuItemSelect = function (itemId, e, menuId) {
+		console.log('BICO got title bar menu selection: ' + itemId);
+		if (itemId ==="optionA"){
+			console.log("SHOW the menu on left");
+			changeStyle("A");
+		}
+		else if (itemId ==="optionB"){
+			changeStyle("B");
+		}
+		else if (itemId ==="optionC"){
+			changeStyle("C");
+		}
+		else if (itemId ==="optionD"){
+			changeStyle("D");
+		}
+		else if (itemId ==="optionE"){
+			changeStyle("E");
+		}
+		
+	};
+
+	ns.PrototypeFunctions.bico.prototype.destroy = function() {
+		// Called when the user selects another function in the B1 window's securities menu, or the window closes
+		// Clean up: document listeners, timers, intervals, unsubscribe any objects watching this, etc.
+		console.log('Destroying BICO',window.myGlobal);
+		
+		ns.PrototypeFunctions.bico.parent.destroy.apply(this, arguments);
+	};
+
+	ns.PrototypeFunctions.bico.prototype.onWindowEvent = function(eventType) {
+		console.log('BICO got window event: ' + eventType);
+	};
+
+	ns.PrototypeFunctions.bico.prototype.drillDown = function(mnem) {
+		var menuBackElem = document.createElement('div');
+		var scrollTop = document.querySelector('.b1-bico-scroll').scrollTop;
+
+		menuBackElem.id = 'b1-drill-twoLine';
+		menuBackElem.innerHTML = '&lt;Menu&gt; to Return';
+		menuBackElem.addEventListener('click', menuBack.bind(this, this.owner, scrollTop));
+		this.owner.showContentByCommand(mnem);
+		this.owner.el.querySelector('.b1-two-line').appendChild(menuBackElem);
+	};
+
+	function menuBack(owner, scrollTopFromBICO) {
+		this.owner.showContentByCommand('BICO');
+		window.setTimeout(function () { document.querySelector('.b1-bico-scroll').scrollTop = scrollTopFromBICO; }, 0);
+	}
+	
+	ns.PrototypeFunctions.bico.prototype.popOut = function(mnem) {
+		console.log(`drill down to ${mnem}`);
+	
+
+	var options_abc = {
+			title: 'BLOOMBERG',
+			initialFunction: mnem,
+			initialSecurity: 'vrx',
+			//securities: securities,
+			closeDisabled: false, // Usually in prototypes the user should not be able to close the window
+			//initialPresetSize: 'large', // Defaults to 'normal'; possible values are 'tiny','small','large','extraLarge', and 'huge'
+			//x: 0,
+			//y: 0,
+			width: 754,
+			height: 509
+		};
+
+		this.win = new ns.B1Window(options_abc);
+		this.win.setPosition( Math.max(0, this.win.position.x), Math.max(0, this.win.position.y) ); // If centered window is cut off on top or left, align to those edges
+		console.log(this.win);
+		this.win.preventClassicSizing = true;
+
+		// Set the B1 Toolbar (Grey Toolbar) to hidden
+		this.win.el.querySelector('.b1-toolbar').parentNode.style.display = 'none';
+
+		// Set the B1 Commandline to be hidden
+		// And also adjust the CSS top of sibling elements (because everything was absolutely positioned)
+		var top;
+		var node = this.win.el.querySelector('.b1-cmd-box');
+		node.style.display = 'none';
+
+		node = this.win.el.querySelector('.b1-two-line');
+		top = parseInt(window.getComputedStyle(node).getPropertyValue('top'));
+		node.style.top = top - 19 + 'px';
+		
+		node = this.win.el.querySelector('.b1-title-region');
+		top = parseInt(window.getComputedStyle(node).getPropertyValue('top'));
+		node.style.top = top - 19 + 'px';
+
+		node = this.win.el.querySelector('.b1-app-region');
+		top = parseInt(window.getComputedStyle(node).getPropertyValue('top'));
+		node.style.top = top - 19 + 'px';
+		node.style.bottom = 0;
+
+		node = this.win.el.querySelector('.b1-ipanel-box');
+		node.style.display = 'none';
+		
+		this.win.scalingBox.style.transform = '';
+	};
+	
+//////////// EE from gray drop down ///////////////////////////////////////////////////////////////
+
+	ns.PrototypeFunctions.ee = function (initData) {
+		ns.PrototypeFunctions.def.parent.constructor.apply(this, arguments);
+		this.title = 'Earning & Estimates';
+	};
+
+	ns.extend(ns.PrototypeFunctions.ee, ns.BBContentView);
+	
+  	ns.PrototypeFunctions.ee.BACKGROUND_IMAGE_PATH = 'images/b1_ee_drill_in.png';
+
+    
+	ns.PrototypeFunctions.ee.prototype.onDOMReady = function() {
+
+		// Tell the 'owner' (an instance of B1Window) to add a title bar menu button:
+		
+        // Add a dummy title bar button
+        this.owner.addTitleBarButton( {text:'Send', numberGo:'66', id:'send'} );
+		// Add a title bar button
+		this.owner.addTitleBarButton( {text:'DUMMY for ENTRY', numberGo:'60', id:'blank'} );
+        
+        // (In order to open a title bar menu, this function needs to have 'getMenuDefinition' and 'onTitleBarMenuItemSelect' methods)
+		this.owner.addTitleBarMenuButton( {text:'Actions', numberGo:'98', menuId:'actions'} );
+		// Style the function:
+		this.el.classList.add('ee');
+
+		// Add a background image:
+		this.addBackgroundImage(ns.PrototypeFunctions.ee.BACKGROUND_IMAGE_PATH);
+
+		// Load an iPanel image:
+		this.owner.loadIPanelImage('images/b1-sample-ipanel.png');
+		
+		// Load hover image:
+		//this.owner.loadIPanelImage('images/x_tab_credit_hover.png');
+		
+		// Load hover tooltip image:
+		//this.owner.loadIPanelImage('images/x_tab_credit_tooltip.png');
+	};
+
+	ns.PrototypeFunctions.ee.prototype.onImageLoaded = function(e){
+		
+		// Callback from 'addBackgroundImage'
+		if (e.target.getAttribute('src') === ns.PrototypeFunctions.ee.BACKGROUND_IMAGE_PATH){			
+		}
+	};
+	
+	ns.PrototypeFunctions.ee.prototype.destroy = function() {
+		// Called when the user selects another function in the B1 window's securities menu, or the window closes
+		// Clean up: document listeners, timers, intervals, unsubscribe any objects watching this, etc.
+		
+		ns.PrototypeFunctions.ee.parent.destroy.apply(this, arguments);
+		
+		console.log('Destroying ee',arguments,window.myGlobal);
+		
+	};
+
+	ns.PrototypeFunctions.ee.prototype.onWindowEvent = function(eventType) {
+		console.log('ee got window event: ' + eventType);
+		
+	//	console.log('ee 2line: ' + document.getElementById('b1-two-line'));
+	};
+	//[cl]
+	ns.PrototypeFunctions.ee.prototype.menuBack = function() {
+		this.owner.showContentByCommand('BICO');
+	};
+	
+	////////////////////  end of EE    /////////////////////////////////////////////////////////////
+	
+	/////////////// FA from gray drop down /////////////////////////////////////////////////////////
+	ns.PrototypeFunctions.fa = function (initData) {
+		ns.PrototypeFunctions.def.parent.constructor.apply(this, arguments);
+		this.title = 'Financial Analysis';
+	};
+
+	ns.extend(ns.PrototypeFunctions.fa, ns.BBContentView);
+  //  document.getElementById('b1-two-line').innerHTML = "<Menu> to return";
+	
+ //   ns.PrototypeFunctions.fa.b1-two-line.innerHTML = "<Menu> to return";
+	ns.PrototypeFunctions.fa.BACKGROUND_IMAGE_PATH = 'images/b1_fa_drill_in.png';
+
+
+	ns.PrototypeFunctions.fa.prototype.onDOMReady = function() {
+
+		// Tell the 'owner' (an instance of B1Window) to add a title bar menu button:
+		
+
+		// Add a title bar button
+		this.owner.addTitleBarButton( {text:'Send', numberGo:'66', id:'send'} );
+        
+        // (In order to open a title bar menu, this function needs to have 'getMenuDefinition' and 'onTitleBarMenuItemSelect' methods)
+		this.owner.addTitleBarMenuButton( {text:'Actions', numberGo:'98', menuId:'actions'} );
+		// Style the function:
+		this.el.classList.add('fa');
+
+		// Add a background image:
+		this.addBackgroundImage(ns.PrototypeFunctions.fa.BACKGROUND_IMAGE_PATH);
+
+		// Load an iPanel image:
+		this.owner.loadIPanelImage('images/b1-sample-ipanel.png');
+		
+	};
+
+	ns.PrototypeFunctions.fa.prototype.onImageLoaded = function(e){
+		
+		// Callback from 'addBackgroundImage'
+		if (e.target.getAttribute('src') === ns.PrototypeFunctions.fa.BACKGROUND_IMAGE_PATH){
+		}
+	};
+
+	ns.PrototypeFunctions.fa.prototype.destroy = function() {
+		// Called when the user selects another function in the B1 window's securities menu, or the window closes
+		// Clean up: document listeners, timers, intervals, unsubscribe any objects watching this, etc.
+		console.log('Destroying fa');
+		ns.PrototypeFunctions.fa.parent.destroy.apply(this, arguments);
+	};
+
+	ns.PrototypeFunctions.fa.prototype.onWindowEvent = function(eventType) {
+		console.log('fa got window event: ' + eventType);
+	};
+	//[cl]
+	ns.PrototypeFunctions.fa.prototype.menuBack = function() {
+		this.owner.showContentByCommand('BICO');
+	};
+
+	////////////////  end of FA    /////////////////////////////////////////////////////////////////
+	
+	////////////////// BI1 //////////////////////
+	ns.PrototypeFunctions.bi1 = function (initData) {
+		console.log("inside BI 1");
+		ns.PrototypeFunctions.bi1.parent.constructor.apply(this, arguments);
+		this.title = 'Bloomberg Intelligence';
+	};
+
+	ns.extend(ns.PrototypeFunctions.bi1, ns.BBContentView);
+    
+	ns.PrototypeFunctions.bi1.BACKGROUND_IMAGE_PATH = 'images/b1_bi1_drill_in.png';
+
+	ns.PrototypeFunctions.bi1.prototype.onDOMReady = function() {
+
+		// Tell the 'owner' (an instance of B1Window) to add a title bar menu button:
+		
+
+		// Add a title bar button
+		this.owner.addTitleBarButton( {text:'Send', numberGo:'66', id:'send'} );
+        
+        // (In order to open a title bar menu, this function needs to have 'getMenuDefinition' and 'onTitleBarMenuItemSelect' methods)
+		this.owner.addTitleBarMenuButton( {text:'Actions', numberGo:'98', menuId:'actions'} );
+		// Style the function:
+		this.el.classList.add('bi1');
+
+		// Add a background image:
+		this.addBackgroundImage(ns.PrototypeFunctions.bi1.BACKGROUND_IMAGE_PATH);
+
+		// Load an iPanel image:
+		this.owner.loadIPanelImage('images/b1-sample-ipanel.png');
+		
+		// Load hover image:
+		//this.owner.loadIPanelImage('images/x_tab_credit_hover.png');
+		
+		// Load hover tooltip image:
+		//this.owner.loadIPanelImage('images/x_tab_credit_tooltip.png');
+	};
+
+	ns.PrototypeFunctions.bi1.prototype.onImageLoaded = function(e){
+		
+		// Callback from 'addBackgroundImage'
+		if (e.target.getAttribute('src') === ns.PrototypeFunctions.bi1.BACKGROUND_IMAGE_PATH){
+            
+		}
+	};
+
+	ns.PrototypeFunctions.bi1.prototype.destroy = function() {
+		// Called when the user selects another function in the B1 window's securities menu, or the window closes
+		// Clean up: document listeners, timers, intervals, unsubscribe any objects watching this, etc.
+		console.log('Destroying bi 1');
+		ns.PrototypeFunctions.bi1.parent.destroy.apply(this, arguments);
+	};
+
+	ns.PrototypeFunctions.bi1.prototype.onWindowEvent = function(eventType) {
+		console.log('bi1 got window event: ' + eventType);
+	};
+	//[cl]
+	ns.PrototypeFunctions.bi1.prototype.menuBack = function() {
+		this.owner.showContentByCommand('BICO');
+	};
+	///////////////////////////end of BI1///////////////////////
+	
+	////////////////// BI2 //////////////////////
+	ns.PrototypeFunctions.bi2 = function (initData) {
+		ns.PrototypeFunctions.bi2.parent.constructor.apply(this, arguments);
+		this.title = 'Bloomberg Intelligence';
+	};
+
+	ns.extend(ns.PrototypeFunctions.bi2, ns.BBContentView);
+    
+	ns.PrototypeFunctions.bi2.BACKGROUND_IMAGE_PATH = 'images/b1_bi2_drill_in.png';
+	ns.PrototypeFunctions.bi2.prototype.onDOMReady = function() {
+
+		// Tell the 'owner' (an instance of B1Window) to add a title bar menu button:
+		// Add a title bar button
+		this.owner.addTitleBarButton( {text:'Send', numberGo:'66', id:'send'} );
+        
+        // (In order to open a title bar menu, this function needs to have 'getMenuDefinition' and 'onTitleBarMenuItemSelect' methods)
+		this.owner.addTitleBarMenuButton( {text:'Actions', numberGo:'98', menuId:'actions'} );
+		// Style the function:
+		this.el.classList.add('bi2');
+
+		// Add a background image:
+		this.addBackgroundImage(ns.PrototypeFunctions.bi2.BACKGROUND_IMAGE_PATH);
+
+		// Load an iPanel image:
+		this.owner.loadIPanelImage('images/b1-sample-ipanel.png');
+		
+	};
+
+	ns.PrototypeFunctions.bi2.prototype.onImageLoaded = function(e){
+		
+		// Callback from 'addBackgroundImage'
+		if (e.target.getAttribute('src') === ns.PrototypeFunctions.bi2.BACKGROUND_IMAGE_PATH){
+			
+		}
+	};
+
+	ns.PrototypeFunctions.bi2.prototype.destroy = function() {
+		// Called when the user selects another function in the B1 window's securities menu, or the window closes
+		// Clean up: document listeners, timers, intervals, unsubscribe any objects watching this, etc.
+		console.log('Destroying bi2');
+		ns.PrototypeFunctions.bi2.parent.destroy.apply(this, arguments);
+	};
+
+	ns.PrototypeFunctions.bi2.prototype.onWindowEvent = function(eventType) {
+		console.log('bi2 got window event: ' + eventType);
+	};
+	//[cl]
+	ns.PrototypeFunctions.bi2.prototype.menuBack = function() {
+		this.owner.showContentByCommand('BICO');
+	};
+	///////////////////////////end of BI2///////////////////////
+	
+	////////////////// BI3 //////////////////////
+	ns.PrototypeFunctions.bi3 = function (initData) {
+		ns.PrototypeFunctions.bi3.parent.constructor.apply(this, arguments);
+		this.title = 'Bloomberg Intelligence';
+	};
+
+	ns.extend(ns.PrototypeFunctions.bi3, ns.BBContentView);
+    
+	ns.PrototypeFunctions.bi3.BACKGROUND_IMAGE_PATH = 'images/b1_bi3_drill_in.png';
+	ns.PrototypeFunctions.bi3.prototype.onDOMReady = function() {
+
+		// Tell the 'owner' (an instance of B1Window) to add a title bar menu button:
+		// Add a title bar button
+		this.owner.addTitleBarButton( {text:'Send', numberGo:'66', id:'send'} );
+        
+        // (In order to open a title bar menu, this function needs to have 'getMenuDefinition' and 'onTitleBarMenuItemSelect' methods)
+		this.owner.addTitleBarMenuButton( {text:'Actions', numberGo:'98', menuId:'actions'} );
+		// Style the function:
+		this.el.classList.add('bi3');
+
+		// Add a background image:
+		this.addBackgroundImage(ns.PrototypeFunctions.bi3.BACKGROUND_IMAGE_PATH);
+
+		// Load an iPanel image:
+		this.owner.loadIPanelImage('images/b1-sample-ipanel.png');
+		
+	};
+
+	ns.PrototypeFunctions.bi3.prototype.onImageLoaded = function(e){
+		
+		// Callback from 'addBackgroundImage'
+		if (e.target.getAttribute('src') === ns.PrototypeFunctions.bi3.BACKGROUND_IMAGE_PATH){
+			
+		}
+	};
+
+	ns.PrototypeFunctions.bi3.prototype.destroy = function() {
+		// Called when the user selects another function in the B1 window's securities menu, or the window closes
+		// Clean up: document listeners, timers, intervals, unsubscribe any objects watching this, etc.
+		console.log('Destroying bi3');
+		ns.PrototypeFunctions.bi3.parent.destroy.apply(this, arguments);
+	};
+
+	ns.PrototypeFunctions.bi3.prototype.onWindowEvent = function(eventType) {
+		console.log('bi3 got window event: ' + eventType);
+	};
+	//[cl]
+	ns.PrototypeFunctions.bi3.prototype.menuBack = function() {
+		this.owner.showContentByCommand('BICO');
+	};
+	///////////////////////////end of BI3///////////////////////
+	
+	////////////////// NSN //////////////////////
+	ns.PrototypeFunctions.nsn = function (initData) {
+		ns.PrototypeFunctions.nsn.parent.constructor.apply(this, arguments);
+		this.title = 'News: News Story';
+	};
+
+	ns.extend(ns.PrototypeFunctions.nsn, ns.BBContentView);
+    
+	ns.PrototypeFunctions.nsn.BACKGROUND_IMAGE_PATH = 'images/b1_nsn_drill_in.png';
+	ns.PrototypeFunctions.nsn.prototype.onDOMReady = function() {
+
+		// Tell the 'owner' (an instance of B1Window) to add a title bar menu button:
+		// Add a title bar button
+		this.owner.addTitleBarButton( {text:'Send', numberGo:'66', id:'send'} );
+        
+        // (In order to open a title bar menu, this function needs to have 'getMenuDefinition' and 'onTitleBarMenuItemSelect' methods)
+		this.owner.addTitleBarMenuButton( {text:'Actions', numberGo:'98', menuId:'actions'} );
+		// Style the function:
+		this.el.classList.add('nsn');
+
+		// Add a background image:
+		this.addBackgroundImage(ns.PrototypeFunctions.nsn.BACKGROUND_IMAGE_PATH);
+
+		// Load an iPanel image:
+		this.owner.loadIPanelImage('images/b1-sample-ipanel.png');
+		
+	};
+
+	ns.PrototypeFunctions.nsn.prototype.onImageLoaded = function(e){
+		
+		// Callback from 'addBackgroundImage'
+		if (e.target.getAttribute('src') === ns.PrototypeFunctions.nsn.BACKGROUND_IMAGE_PATH){
+			
+		}
+	};
+
+	ns.PrototypeFunctions.nsn.prototype.destroy = function() {
+		// Called when the user selects another function in the B1 window's securities menu, or the window closes
+		// Clean up: document listeners, timers, intervals, unsubscribe any objects watching this, etc.
+		console.log('Destroying nsn');
+		ns.PrototypeFunctions.nsn.parent.destroy.apply(this, arguments);
+	};
+
+	ns.PrototypeFunctions.nsn.prototype.onWindowEvent = function(eventType) {
+		console.log('nsn got window event: ' + eventType);
+	};
+	//[cl]
+	ns.PrototypeFunctions.nsn.prototype.menuBack = function() {
+		this.owner.showContentByCommand('BICO');
+	};
+	///////////////////////////end of NSN///////////////////////
+	
+		////////////////// DOCC //////////////////////
+	ns.PrototypeFunctions.docc = function (initData) {
+		ns.PrototypeFunctions.docc.parent.constructor.apply(this, arguments);
+		this.title = 'Company Filings: Earning Call';
+	};
+
+	ns.extend(ns.PrototypeFunctions.docc, ns.BBContentView);
+    
+	ns.PrototypeFunctions.docc.BACKGROUND_IMAGE_PATH = 'images/b1_docc_drill_in.png';
+	ns.PrototypeFunctions.docc.prototype.onDOMReady = function() {
+
+		// Tell the 'owner' (an instance of B1Window) to add a title bar menu button:
+		// Add a title bar button
+		this.owner.addTitleBarButton( {text:'Send', numberGo:'66', id:'send'} );
+        
+        // (In order to open a title bar menu, this function needs to have 'getMenuDefinition' and 'onTitleBarMenuItemSelect' methods)
+		this.owner.addTitleBarMenuButton( {text:'Actions', numberGo:'98', menuId:'actions'} );
+		// Style the function:
+		this.el.classList.add('docc');
+
+		// Add a background image:
+		this.addBackgroundImage(ns.PrototypeFunctions.docc.BACKGROUND_IMAGE_PATH);
+
+		// Load an iPanel image:
+		this.owner.loadIPanelImage('images/b1-sample-ipanel.png');
+		
+	};
+
+	ns.PrototypeFunctions.docc.prototype.onImageLoaded = function(e){
+		
+		// Callback from 'addBackgroundImage'
+		if (e.target.getAttribute('src') === ns.PrototypeFunctions.docc.BACKGROUND_IMAGE_PATH){
+			
+		}
+	};
+
+	ns.PrototypeFunctions.docc.prototype.destroy = function() {
+		// Called when the user selects another function in the B1 window's securities menu, or the window closes
+		// Clean up: document listeners, timers, intervals, unsubscribe any objects watching this, etc.
+		console.log('Destroying docc');
+		ns.PrototypeFunctions.docc.parent.destroy.apply(this, arguments);
+	};
+
+	ns.PrototypeFunctions.docc.prototype.onWindowEvent = function(eventType) {
+		console.log('docc got window event: ' + eventType);
+	};
+	//[cl]
+	ns.PrototypeFunctions.docc.prototype.menuBack = function() {
+		this.owner.showContentByCommand('BICO');
+	};
+	///////////////////////////end of DOCC///////////////////////
+	
+	///////////////////  DEF  from grey dropdown ////////////////////////////////////////////////////////////////////
+
+	ns.PrototypeFunctions.def = function (initData) {
+		ns.PrototypeFunctions.def.parent.constructor.apply(this, arguments);
+		this.title = 'DEF Title';
+	};
+
+	ns.extend(ns.PrototypeFunctions.def, ns.BBContentView);
+
+	ns.PrototypeFunctions.def.prototype.onDOMReady = function() {
+		if (this.owner.selectedSecurity){
+			this.loadSecurity(this.owner.selectedSecurity);
+		}
+	};
+
+	ns.PrototypeFunctions.def.prototype.loadSecurity = function(security) {
+		console.log('DEF is loading security: ' + security.title);
+	};
+
+	ns.PrototypeFunctions.def.prototype.onSecuritySelected = function(security) {
+		this.loadSecurity(security);
+	};
+
+	ns.PrototypeFunctions.def.prototype.destroy = function() {
+		console.log('Destroying DEF');
+		ns.PrototypeFunctions.def.parent.destroy.apply(this, arguments);
+	};
+
+    
+                	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	app.init = function(){
+
+		ns.Desktop.create( {icons:['recycle','bb']} );
+
+		ns.Taskbar.create();
+		ns.Taskbar.addButton('bb', 'taskbar-bb');
+
+		var securities = {  // Items in the window's securities menu
+		    vrx: {
+				title:'VALEANT PHARMACE Equity',
+				shortTitle:'VRX US Equity'
+			},
+			t: {
+				title:'AT&T INC Equity',
+				shortTitle:'AT&T US Equity'
+			},
+			fb: {	
+				title:'FACEBOOK INC-A Equity',
+				shortTitle:'FB US Equity'
+			},
+			aapl: {
+				title:'APPLE INC Equity',
+				shortTitle:'AAPL US Equity'
+			},
+			nflx: {
+				title:'NETFLIX INC Equity',
+				shortTitle:'NFLX US Equity'
+			},
+			goog: {
+				title:'ALPHABET INC-C Equity',
+				shortTitle:'GOOG US Equity'
+			},
+			tsla: {
+				title:'TESLA MOTORS Equity',
+				shortTitle:'TSLA US Equity'
+			},
+			msft: {
+				title:'MICROSOFT CORP Equity',
+				shortTitle:'MSFT US Equity'
+			},
+			sbux: {
+				title:'STARBUCKS CORP Equity',
+				shortTitle:'SBUX US Equity'
+			},
+			cat: {
+				title:'CATERPILLAR INC Equity',
+				shortTitle:'CAT US Equity'
+			},
+			vz: {
+				title:'VERIZON COMMUNIC Equity',
+				shortTitle:'VZ US Equity'
+			},
+			yhoo: {
+				title:'YAHOO! INC Equity',
+				shortTitle:'YHOO US Equity'
+			}
+		};
+
+		var options = {
+			title: '1 - BLOOMBERG',
+			initialFunction: 'BICO',
+			initialSecurity: 'vrx',
+			securities: securities,
+			closeDisabled: true, // Usually in prototypes the user should not be able to close the window
+			//initialPresetSize: 'large', // Defaults to 'normal'; possible values are 'tiny','small','large','extraLarge', and 'huge'
+			//x: 0,
+			//y: 0,
+			//width: 900,
+			//height: 500
+		};
+
+		this.win = new ns.B1Window(options);
+
+		this.win.positionCentered();
+		this.win.setPosition( Math.max(0, this.win.position.x), Math.max(0, this.win.position.y) ); // If centered window is cut off on top or left, align to those edges
+		let node = this.win.el.querySelector('.b1-two-line');
+		
+		//node.innerHTML = `
+			   // <div class="b1-drill-twoLine"> &lt;Menu&gt; to Return</div>`;
+			    
+	    console.log("node:",node); 
+		//top = parseInt(window.getComputedStyle(node).getPropertyValue('top'));
+		//node.style.top = top - 19 + 'px';
+	};
+    /* CONTENT FOR BICO */
+    let para_1 = "(Bloomberg Intelligence) -- AT&T Inc., the largest telecom carrier in the U.S., is in the midst of integrating DirecTV. AT&T is launching new and bundled services using DirecTV's content in a bid to spur growth as its legacy wireline and wireless segments slow. The company bought DirecTV in 2015 to expand its video business and gain access to content rights to offer mobile and over-the-top video services. Seeks new avenues for growth, AT&T also expanded into Mexico's wireless market by" 
+  		+ "purchasing Iusacell and Nextel Mexico. \n\nExpense reductions remain a core part of AT&T's strategy as well as it seeks to right-size its cost structure and boost cash flow. AT&T expects the DirecTV deal to yield at least $2.5 billion in synergies by 2018, while other cost reduction measures are forecast to yield $3 billion in savings.";
+    let para_2 = "Key Points:";
+    
+    
+	ns.B2App.load( function () {app.init(); } );
+	
+})();
+    
+    
+ 
+     
+</script>
+</body>
