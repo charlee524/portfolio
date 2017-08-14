@@ -1,0 +1,31 @@
+/* *********************************************************************
+/* Charlotte Lee Sept 2012
+ * This is use to create pie chart prototype similar to imap
+ ***********************************************************************/
+@font-face {
+      font-family:bloomberg-font;
+      src: url('_fonts/bloomberg-propu_i.ttf');
+    }
+
+html{
+      overflow: hidden;
+      
+}
+body {
+      background: -webkit-gradient(linear, 25% 10% , 30% 90%, from(#2C2C2C), to(#000000));
+      background: -moz-gradient(centertop, (#000000) 20%,(#2C2C2C) 60%);
+    /* background: -moz-linear-grandient(left top, #000000 0%,#2C2C2C 100%); */
+}
+div#canvasDiv{
+    position: relative;
+}
+#canvas {
+    top:0;
+    left:0;
+    color: white;
+    overflow:visible;
+    white-space: pre-wrap;
+    position: absolute;
+
+}
+
