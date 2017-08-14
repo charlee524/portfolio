@@ -1,0 +1,73 @@
+function ticket() {
+	var cv;
+	var window_size= [0,0];
+	//var sizeToUse=getRadius();
+	//console.log(" sizeToUse:",sizeToUse);
+	//var r = sizeToUse;
+	var ticketW = 850;
+	var ticketH = 200;
+	var ticketDiv = document.getElementById("ticketDiv");
+	
+	var ticketTable = document.createElement("table");
+	ticketDiv.appendChild(ticketTable);
+	var numCol = 2;
+	var text = [["INTL BUSINESS MACHINE(USD) MKT DAY"],["EMSX Add Order"]];
+	var new_row = addTableRow(numCol, text,"#FFFFFF", "#2E2D2B");
+	ticketTable.appendChild(new_row);
+	
+	numCol = 2;
+	text = [["CHARLOTTE LEE 100"],["BLOOMBERG/731 LEXINGTON (9001)"]];
+	new_row = addTableRow(numCol, text ,"#F09000", "#2E2D2B");
+	ticketTable.appendChild(new_row);
+	
+	var numCol = 8;
+	text = [["Last"],["Change"],["Bid"],["Ask"],["High"],["Low"],["Volume"],["VWAP"]];
+	new_row = addTableRow(numCol, text, "#F09000", "#000000" );
+	ticketTable.appendChild(new_row);
+	
+	var numCol = 8;
+	text = [["189.91"],["-0.19"],["189.96"],["189.99"],["191.64"],["188.88"],["2244745"],["190.2967"]];
+	new_row = addTableRow(numCol, text, "#F09000", "#000000" );
+	ticketTable.appendChild(new_row);
+	
+	var numCol = 3;
+	text = [["MarketDepth"],["Block"],["Routes"]];
+	new_row = addTableRowCheck(numCol, text, "#F09000", "#000000" );
+	ticketTable.appendChild(new_row);
+	
+	var newButton = addButton("Limits","#F09000", "#000000");
+	ticketDiv.appendChild(newButton);
+	
+	//var combo = addCombo("Limits");
+	//ticketDiv.appendChild(combo);
+	addCombo("side")
+}
+
+function addButton(text,fg,bg){
+	var btn = document.createElement("input");
+	btn.setAttribute("type","button");
+	btn.setAttribute("width",300);
+	btn.setAttribute("onclick",btnClick());
+	return btn;
+}
+function btnClick(){
+	
+}
+function comboInit(thelist){
+	theinput = document.createElement("theinput");  
+	var idx = thelist.selectedIndex;
+	var content = thelist.options[idx].innerHTML;
+	if(theinput.value == "")
+		theinput.value = content;
+}
+function addCombo(text){
+	
+	var combo = document.createElement("select");
+	combo.setAttribute("ID","side");
+	combo.setAttribute("name","side");
+	var option = document.createElement("option");
+	combo.options.add(option);
+	option.innerText="SIDE";
+	
+	return combo;
+}

@@ -1,0 +1,33 @@
+<html>
+  <head>
+  <script type="text/javascript" src="emsTicket.js">
+    input#check{
+    color: black;
+  }
+  </script>
+ 
+  <style>
+  </style>
+  </head>
+ 
+ <body>
+    <div id='ticketDiv'></div>
+ </body>
+ 
+ <script type="text/javascript">
+ /* Charlotte Lee October 2012
+     This is use to create pie chart prototype similar to imap*/
+   var mainDiv = document.createElement("table");
+   var check = document.createElement("input");
+  check.setAttribute("type","checkbox");
+  var label = document.createElement("label");
+   
+  label.appendChild(check);
+  var text = document.createTextNode("MarketDepth");
+  label.appendChild(text);
+   mainDiv.appendChild(label);
+   ticketDiv.appendChild(mainDiv);
+ 
+ </script>
+
+</html>
