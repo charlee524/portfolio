@@ -1,0 +1,2195 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>EMSX Grid - Freeze Row</title>
+    <link rel="stylesheet", type="text/css" href="scrollbar.css" />
+    
+    <style type="text/css">
+        @font-face {
+            font-family:bloomberg-font;
+            src:url('bloomberg-propu_i.ttf');
+        }
+
+        @-webkit-keyframes show-flyover {
+            0% {
+                opacity:0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        body {
+              -webkit-user-select:none;
+              background-color:#000;
+              color: #ff8408;
+              font-family: bloomberg-font;
+        }
+
+        document.move {
+            cursor:move;
+        }
+
+
+/*********** table stylings by tags ****************************************/
+       
+       
+
+/*********** general stylings **************************************************/
+        .menu-handle {
+            float:left;
+            position:absolute;
+            top:50px;
+        }
+
+        .main {
+            height: 1000px;
+            overflow:auto;
+            position: absolute;
+            width:100%;
+        }
+
+/*********** table stylings by class/id ****************************************/
+        .sort-arrow {
+            background:url('sort_arrow.png')center center no-repeat;
+            background-size:7px 12px;
+            float:right;
+            height:0px;
+            width:0px;
+        }
+        .sort-arrow.on {
+            height:19px;
+            width:7px;
+        }
+        .sort-arrow.down {
+            -webkit-transform:rotate(180deg);
+        }
+        .down-arrow {
+            background:url('GreyToolbar_Options_Normal_19.png')center center no-repeat;
+            background-size: 9px 15px;
+            color:#fff;
+            cursor:pointer;
+            float:right;
+            height:19px;
+            margin-left:3px;
+            opacity:0;
+            right:0;
+            width:11px;
+        }
+        .down-arrow:hover{
+            /*background-color:#1180cd;*/
+            opacity:1;
+        }
+        .down-arrow.visible {
+            opacity: 1;
+        }
+        .down-arrow.visible:focus {
+            opacity:1;
+            background-image:url('GreyToolbar_Options_Hot_19.png');
+        }
+
+        .placeholder {
+            -webkit-animation-name:slidein;
+            /*-webkit-animation-duration: 2s;*/
+            -webkit-transition:all 250ms ease-in-out;
+            background-color:rgb(18,73,129); 
+            height:0px;
+            max-width: 1px !important;
+            margin: 0 !important;
+            overflow: hidden;
+            padding: 0 !important;
+            width: 1px !important;
+        }
+
+        .delete {
+            -webkit-transition:all 250ms ease-out;/*, width 2500ms ease-in-out;;*/
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+        }
+
+        .value-cell {
+            /*-webkit-transition:width 1000ms ease-in-out;*/
+            border:1px solid rgb(77, 77, 77); 
+            border-right:none;
+            color:#fff; 
+            font-size:14px;
+            line-height: 12px;
+            padding-left:8px;
+            padding-right:4px;
+            text-align: right;
+            white-space: nowrap;
+        }
+        .bg-white-1 {
+	        background-color: #ffffff;
+			color: black;
+			border: 1px; 
+		}
+        .bg-black-1{
+        	background-color: black;
+		    color: black;
+        }
+       
+		.bg-yellow-1 {
+				background-color: #e0c010;
+				color: black;
+				border: 1px; 
+	    }
+	    .bg-yellow-1:hover {
+				background-color: #ACB34E;
+				color: #094649;
+				border: 1px; 
+	    }
+	    .bg-old_lightblue-1{
+	    	background-color: #90C4F4;
+		       color: black;
+		       opacity: .9;
+	    }
+	   .bg-lightblue-1 {
+	        color: #FFFFFF;
+	        background-color: #90C4F4;
+   			border: .5px solid #136bfd;
+   			width: 308px;
+		}
+    	.bg-blue-1 {
+				background-color: #015dba;
+				color: #A9CFF4;
+				border: 1px;
+		}
+		.bg-blue-1:hover {
+				background-color: #0A6BCA;
+				color: #FFFFFF;
+				border: 1px;
+		}
+		.bg-blue-2 {
+				background-color: #00458a;
+				color: #F2F2F2;
+				border: 1px;
+		}
+		.bg-blue-2:hover {
+				background-color: #0959A7;
+				color: #F2F2F2;
+				border: 1px;
+		}
+		.bg-blue-3 {
+				background-color: #003263;
+				color: #D8D8D8;
+    	}
+    	.bg-blue-3:hover {
+				background-color: #015dba;
+				color: #BAD8F3;
+    	}
+		.bg-blue-4 {
+				background-color: #002346;
+				color: #AAAAAA;
+		}
+		.bg-blue-4:hover {
+				background-color: #094175;
+				color: #85A3BE;
+		}
+		.bg-grey-1 {
+				background-color: #373737;
+				color: #AAAAAA;
+		}
+		.bg-green-1{
+			background-color: #00A000;
+			color: black;
+			border: 1px; 
+		}
+		.bg-green-1:hover{
+			background-color: #099C42;
+			color: #092742;
+			border: 1px; 
+		}
+        .bg-green {
+            background-color:#30c030;
+            color:black;
+        }
+
+        .bg-orange {
+            background-color: #f06000;
+            color:black;
+        }
+
+        .bg-blue {
+            background-color: #1080c0;
+            color:black;
+        }
+
+        .bg-yellow {
+            background-color: #e0c010;
+            color:black;
+        }
+
+        .bg-red {
+            background-color: #a01020;
+            color:black;
+        }
+
+        .fg-yellow {
+            color:#e0c010;
+        }
+
+        .fg-green {
+            color:#20c030;
+        }
+
+        .column-width-handle {
+            border:1px solid rgb(77, 77, 77);
+            border-left:none;
+            cursor:e-resize;
+            padding:0;
+            min-width:2px;
+            width:2px;
+        }
+        .column-width-handle.focused {
+            background-color:#2549a4;
+        }
+
+/*********** table stylings by div****************************************/
+
+       .monitorButton{
+       	  left: 0px;
+       	  position: absolute;
+       	  top:10px;
+       }
+       #leftSide{
+       	float: left;
+        border-spacing:0;border-collapse: collapse;
+        width: 310px;
+        height: 300px;
+        position: absolute;
+        top: 60px;
+        
+       }
+       #rightSide{
+       	float: left;
+       	left: 310px;
+        border-spacing:0;border-collapse: collapse;
+        width: 310px;
+        height: 300px;
+        position: absolute;
+        top: 60px;
+       }
+       
+        #gridLeft {
+            border-spacing:0;border-collapse: collapse;
+            width: 310px;
+            position: absolute
+            float: left;   
+            height: 280px;
+            overflow-y:scroll;
+        	overflow-x:hidden;         
+        }
+        #gridRight {
+            border-spacing:0;border-collapse: collapse;
+            width: 310px;
+            position: absolute;
+            float: left;
+            height: 280px;
+            overflow-y:scroll;
+        	overflow-x:hidden;         
+        }
+        .gridHeader {
+          /*  -webkit-transition:height 2000ms ease-in-out; */
+            height:20px;
+            width:300px;
+            display:block;
+            
+        }
+        .gridRow {
+          /*  -webkit-transition:height 2000ms ease-in-out; */
+            height:20px;
+            display:block;
+            width:300px;
+            padding-top:1px;
+            padding-bottom:1px;
+        }
+        .gridRow:hover{
+        	border-top: 1px solid #ffffff;
+        	border-bottom: 1px solid #ffffff;    
+        	padding-top: 0;
+       		padding-bottom: 0;
+			opacity: .98;
+        }
+        .gridRow:focus:after{
+        	background-color: #C34DD5;
+        	
+        }
+       
+        .gridRow:selectedRow{
+        	border-style: : solid;
+        	border: 1px solid #136bfd;
+        	opacity: .9;
+        	color: rgba(163, 194, 255, .50);
+        }
+        .gridRowR {
+          /*  -webkit-transition:height 2000ms ease-in-out; */
+            height:20px;
+            display:block;
+            width:31px;
+        }
+        .gridRowR:hover{
+        	border-style: : solid;
+        	border-width: 5px;
+        	border-color: #63ABED;
+        	opacity: .85;
+        }
+       
+
+        .headerCell {
+            -webkit-box-sizing:border-box;
+            /*-webkit-transition:max-width 200ms ease-out;/*, width 2500ms ease-in-out;;*/
+            background-image:-webkit-linear-gradient(top,  #717171 0%, #3b3b3b 10%, #272727 90%,  #222222 100%);
+            border:1px solid rgb(77, 77, 77);
+            border-right:none;
+        
+            cursor:default;
+            font-size: 13px;
+            font-weight: normal;
+            overflow: hidden;
+            padding:1px 2px 1px 4px;
+            white-space: nowrap;
+            float: left;
+            width: 50px;
+        }
+       
+        .rowCell {
+            -webkit-box-sizing:border-box;
+          /*  background-image:-webkit-linear-gradient(top,  #717171 0%, #3b3b3b 10%, #272727 90%,  #222222 100%); */
+            border:1px solid rgb(77, 77, 77);
+            border-right:none;
+            border-top:none;
+            border-bottom:none;
+            cursor:default;
+            font-size: 13px;
+            font-weight: normal;
+            overflow: hidden;
+            padding:2px 2px 2px 4px;
+            white-space: nowrap;
+            float: left;
+            width: 50px;
+            padding: 1px 1px 1px 1px;
+            height: 22px;
+        }
+        .rowCell.selected {
+            background-color:rgb(32, 79, 127);
+            color:rgb(93,142,188);
+        }
+        .rowCell.magnified {
+            -webkit-transform:scale(1.2);
+            border:2px solid rgb(100, 100, 100);
+        }
+
+        .rowCell:hover {
+        /*    background-image: -webkit-linear-gradient(top, #828282 0%, #3c3c3c 10%, #404040 90%,  #555555 100%); */
+        }
+        .rowCell:hover .down-arrow {
+            opacity: 1;
+        }
+
+
+     
+        
+
+        .row-count {
+            -webkit-flex-flow:column;  
+            color:#ddd;
+            display:-webkit-flex; 
+            font-size:13px; 
+            text-align:center; 
+        }
+
+        .rowcount {
+            font-size: 10px;
+            line-height: 3px;
+            margin-bottom:0;
+            padding-top:4px;
+            padding-bottom:0;
+        }
+        .rowcount-unit {
+            font-size:8px;
+            line-height: 2px;
+        }
+
+/********* right click menu stuff ******************/
+        .menu {
+            background-color:rgb(86, 86, 86);
+            border:1px solid #000;
+            border-radius:2px;
+            color:#fff;
+            font-size:12px;
+            left:-300px;
+            opacity:0;
+            padding:0;
+            position:absolute;
+            top:-100px;
+            z-index: 1;
+        }
+        .menu.visible, .menu.row.visible {
+            opacity:1;
+            z-index: 99;
+        }
+
+        .menu.row {
+            opacity:0;
+            top:-100px;
+            left:-300px;
+        }
+
+        .right-click-menu-inner-frame {
+            border:1px solid #383838;
+            border-bottom:none;
+            box-shadow: 1px 1px 0 0 #696969 inset;
+            padding:5px;
+        }
+
+        .right-click-menu-item {
+            cursor: pointer;
+            line-height:12px;
+            padding: 2px 2px 2px 20px;
+            vertical-align: middle;
+        }
+        .right-click-menu-item:hover {
+            background-color:#4e4e4e;
+        }
+        .right-click-option {
+            display:-webkit-box;
+        }
+
+        .toggle {
+            border:1px solid #000;
+            border-radius:2px;
+            box-shadow:inner 1px 1px 0 0 #000;
+            box-sizing:border-box;
+            font-size: 10px;
+            line-height: 11px;
+            padding:1px 12px 1px 12px;
+        }
+        .toggle.on {
+            background-color:#014fa0;
+        }
+
+        .toggle:first-child {
+            border-right:none;
+            border-top-right-radius:0px;
+            border-bottom-right-radius: 0px;
+            margin-left:15px;
+        }
+        .toggle:hover {
+            background-color:#333;
+        }
+        .toggle.on:hover {
+            background-color:#074f72;
+        }
+
+        .checkbox {
+            cursor:pointer;
+            left:0px;
+            height:11px;
+            line-height: 13px;
+            margin:0px 4px 0px 2px;
+            vertical-align: middle;
+            width:13px;
+        }
+
+        .icon-14 {
+            background-size: 14px 14px;
+        }
+
+        .filter-icon {
+            background:url('filter_Inverted.png')center left no-repeat;
+            background-size: 17px 17px;
+        }
+
+        .edit-icon {
+            background:url('edit_Inverted.png')center left no-repeat;
+        }
+
+        .cancel-icon {
+            background:url('cancel_Inverted.png')center left no-repeat;
+        }
+
+        .manual-icon {
+            background:url('manual_Inverted.png')center left no-repeat;
+        }
+
+        .doneforday-icon {
+            background:url('doneforday_Inverted.png')center left no-repeat;
+        }
+
+        .splitorder-icon {
+            background:url('split_Inverted.png')center left no-repeat;
+        }
+
+        .suspendorder-icon {
+            background:url('pause_Inverted.png')center left no-repeat;
+        }
+
+        .delete-icon {
+            background:url('delete_Inverted.png')center left no-repeat;
+        }
+
+        .copy-icon {
+            background:url('copy_Inverted.png')center left no-repeat;background-size: 14px 14px;
+        }
+
+        .paste-icon {
+            background:url('paste_Inverted.png')center left no-repeat;background-size: 14px 14px;
+        }
+
+        .sort-icon {
+            background:url('sort_Inverted.png')center left no-repeat;background-size: 14px 14px;   
+        }
+
+        .groupby-icon {
+            background:url('group_Inverted.png')center left no-repeat;background-size: 14px 14px;
+        }
+
+/************************* down arrow menu stuff ******************************/
+        .down-arrow-menu {
+           /* opacity: 1;
+            top:-200px;
+            left:-200px;*/
+        }
+        .list ul li {
+            list-style: none;
+        }
+
+        .down-arrow-menu-section {
+            -webkit-flex-flow:row;
+            -webkit-justify-content:space-between; 
+            border-bottom:1px solid #000; 
+            display:-webkit-flex;
+            margin:2px 2px 2px 0px;
+            padding:1px 4px 1px 4px;
+            line-height:20px;
+        }
+
+
+
+        .down-arrow-menu-item {
+            float:left;
+        }
+
+
+        .text-entry {
+            border-radius:4px; 
+            /*margin:6px 6px 6px 8px; */
+            padding:0; 
+            width:100px;
+        }
+
+        .list-wrapper {
+            border:2px solid #000; 
+            border-radius:4px;
+            height:60px; 
+            overflow-y:auto; 
+            overflow-x:hidden;  
+        }
+
+        .list-in-menu {
+            margin:0px;
+            padding-left:2px; 
+        }
+
+        .groupby {
+            
+        }
+
+
+        #filterby {
+            display:block;
+            /*float:left;*/
+            padding:0px 2px 0px 4px;
+        }
+
+        #equal-button {
+            line-height: 20px;
+            margin:0px;
+            padding:1px;
+            width:128px;
+        }
+
+        #search-text {
+            width:100%;
+        }
+
+
+    
+
+
+    </style>
+    </head>
+    <body>
+        <div class='main'>
+        <button class="monitorButton" id="monitorButton" onclick="monitorMDM()">Start Monitoring</button>
+        <div id="leftSide">
+	        <div class="gridHeader bg-grey-1">	
+	        	<div class="headerCell">E</div>
+	        	<div class="headerCell">Time</div>
+	        	<div class="headerCell">Total</div>
+	        	<div class="headerCell">Mmkr</div>
+	        	<div class="headerCell">Size</div>
+	        	<div class="headerCell">Bid</div>
+	        </div>
+	        <div id ="gridLeft">
+	        	<div class="gridRow bg-yellow-1">
+		        	<div class="rowCell">T</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">3</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">3</div>
+		        	<div class="rowCell">189.22</div>
+	        	</div>
+	        	<div class="gridRow bg-yellow-1">
+		        	<div class="rowCell">Y</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">4</div>
+		        	<div class="rowCell">BYXX</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">189.22</div>
+	        	</div>
+	        	<div class="gridRow bg-yellow-1">
+		        	<div class="rowCell">J</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">5</div>
+		        	<div class="rowCell">EDGA</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">189.22</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-1">
+		        	<div class="rowCell">T</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">6</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">2.5</div>
+		        	<div class="rowCell">189.21</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-1">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">7</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">189.21</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-2">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">9.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">2.50</div>
+		        	<div class="rowCell">189.20</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-3">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-3">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+				<div class="gridRow bg-blue-3">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+				<div class="gridRow bg-blue-3">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-3">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+				<div class="gridRow bg-blue-3">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+				<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+         	    <div class="gridRow bg-blue-4">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+				<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+				<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">N</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">13.50</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">1.44</div>
+		        	<div class="rowCell">189.19</div>
+	        	</div>
+	        </div>
+        </div>
+        <div id="rightSide">
+	        <div class="gridHeader bg-grey-1">	
+	        	<div class="headerCell">Ask</div>
+	        	<div class="headerCell">Size</div>
+	        	<div class="headerCell">Mmkr</div>
+	        	<div class="headerCell">Total</div>
+	        	<div class="headerCell">Time</div>
+	        	<div class="headerCell">E</div>
+	        </div>
+	        <div id="gridRight"> 
+	        	<div class="gridRow bg-yellow-1">
+		        	<div class="rowCell">189.21</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-1">
+		        	<div class="rowCell">189.22</div>
+		        	<div class="rowCell">1.7</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">2.17</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">T</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-1">
+		        	<div class="rowCell">189.22</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">ARCX</div>
+		        	<div class="rowCell">3.17</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">P</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-2">
+		        	<div class="rowCell">189.24</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">ARCX</div>
+		        	<div class="rowCell">3.17</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">T</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-3">
+		        	<div class="rowCell">189.27</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NSDQ</div>
+		        	<div class="rowCell">9.22</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.28</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.28</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">3</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.31</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.31</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">3</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.31</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.31</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">3</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>	    
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.31</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.31</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">3</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.31</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>
+	        	<div class="gridRow bg-blue-4">
+		        	<div class="rowCell">189.31</div>
+		        	<div class="rowCell">1</div>
+		        	<div class="rowCell">NYSE</div>
+		        	<div class="rowCell">3</div>
+		        	<div class="rowCell">12:25</div>
+		        	<div class="rowCell">N</div>
+	        	</div>	
+	        		            	
+	        </div>
+        </div>
+       
+    </body>
+    <script type="text/javascript">
+    (function(){
+        //===== global variables and enums ============//
+        var MouseDown = false;
+        var SELECTION_MODE = "selection_mode";
+        var ACTION_MODE = "action_mode";
+        var NONE = "none";
+
+        var Mode = {
+            Row: SELECTION_MODE,
+            Column: ACTION_MODE
+        };
+        
+        //===== table row creator ===========//
+
+        // cell_values is array
+        var Row = function (cell_values) {
+            var tr = document.createElement('tr');
+            var inner = "<td class='value-cell'>";
+            var handle = "</td><td class='column-width-handle'></td>";
+
+            for(var c =0; c < cell_values.length; c++) {
+                if(c == 1) {
+                    inner= "<td class='value-cell bg-green'>";
+                    handle = "</td><td class='column-width-handle bg-green'></td>";
+                } else if(c == 2) {
+                    inner = "<td class='value-cell bg-orange'>";
+                    handle = "</td><td class='column-width-handle bg-orange'></td>";
+                } else if(c == 3 ){
+                    inner = "<td class='value-cell bg-red'>";
+                    handle = "</td><td class='column-width-handle bg-red'></td>";
+                } else if(c == 4 ){
+                    inner = "<td class='value-cell bg-yellow'>";
+                    handle = "</td><td class='column-width-handle bg-yellow'></td>";
+                } else if(c == 5) {
+                    inner = "<td class='value-cell bg-blue'>";
+                    handle = "</td><td class='column-width-handle bg-blue'></td>";
+                } else if(c == 6) {
+                    inner = "<td class='value-cell fg-yellow'>";
+                    handle = "</td><td class='column-width-handle'></td>";
+                } else if(c == 7 ) {
+                    inner = "<td class='value-cell fg-green'>";
+                    handle = "</td><td class='column-width-handle'></td>";
+                } else if(c == 9) {
+                    inner = "<td class='value-cell fg-green' >";
+                    handle = "</td><td class='column-width-handle'></td>";
+                } else {
+                    inner = "<td class='value-cell'>";
+                    handle = "</td><td class='column-width-handle'></td>";
+                }
+
+                tr.innerHTML += inner + cell_values[c] + handle;
+            }
+            return tr;
+        };
+
+        //============= scroll -============
+        document.getElementById("leftSide").style.overflowy= "scroll";
+        document.getElementById("rightSide").style.overflowy = "scroll";
+      
+        
+     //   document.addEventListener('mousedown', documentMouseDownHandler, false);
+    //    document.addEventListener('contextmenu', documentMouseDownHandler, false);
+        // document.addEventListener('mouseout',  documentMouseOutHandler, false);
+        // document.addEventListener('mousemove', documentMouseMoveHanlder, false);
+    })(); 
+    
+    function monitorMDM(){
+    	document.getElementById("monitorButton").innerHTML="Monitoring";
+		insert_new_row();
+    }
+        
+    var stories_timer;
+    var stories_timer1;
+   
+    var num_of_ticking_stories = 0;
+    
+    var right_data = [
+    	[189.23, 1, "BYXX",1,getTime(),"Y",   "bg-yellow-1"],
+        
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "NSDQ",1,getTime(),"Y",  "bg-blue-1"],
+      
+        [189.25, 1, "EDGX",1,getTime(),"Y",  "bg-blue-2"],
+        [189.25, 1, "FLOW",1,getTime(),"Y",  "bg-blue-2"],
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "EDGX",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "NSDQ",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.28, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.28, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.29, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.29, 1, "NSDQ",1,getTime(),"Y", "bg-blue-4"],
+        [189.31, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.31, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.32, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.35, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.37, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.39, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+    ];
+    var right_data1 = [
+    	[189.23, 1, "BYXX",1,getTime(),"Y",   "bg-yellow-1"],
+        [189.23, 1, "NSDQ",1,getTime(),"Y",   "bg-yellow-1"],
+        
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.25, 1, "EDGX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "BYXX",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.28, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.28, 1, "NSDQ",1,getTime(),"Y", "bg-blue-4"],
+        [189.29, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.32, 1, "NSDQ",1,getTime(),"Y", "bg-blue-4"],
+        [189.32, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.35, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.36, 1, "NSDQ",1,getTime(),"Y", "bg-blue-4"],
+        [189.37, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.37, 1, "NSDQ",1,getTime(),"Y", "bg-blue-4"],
+        [189.37, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.37, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.38, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.39, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.42, 1, "NSDQ",1,getTime(),"Y", "bg-blue-4"],
+        
+    ];
+    var right_data2 = [
+    	[189.23, 1, "BYXX",1,getTime(),"Y",   "bg-yellow-1"],
+        [189.23, 1, "BYXX",1,getTime(),"Y",   "bg-yellow-1"],
+        [189.23, 1, "BYXX",1,getTime(),"Y",   "bg-yellow-1"],
+        
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "FLOW",1,getTime(),"Y",  "bg-blue-1"],
+        [189.24, 1, "EDGX",1,getTime(),"Y",  "bg-blue-1"],
+        
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "FLOW",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "EDGX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+    	[189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+       
+    ];
+    var right_data3 = [
+    	[189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y",  "bg-blue-1"],
+        
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "FLOW",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "EDGX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+    ];
+    //new one
+    var right_data4 = [
+    	[189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        [189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+         [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+          [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y",  "bg-blue-1"],
+        
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "FLOW",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "EDGX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+    ];
+    var right_data5 = [
+    	[189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        [189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y",  "bg-blue-1"],
+        
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "FLOW",1,getTime(),"Y",  "bg-blue-3"],
+       
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+    ];
+    var right_data6 = [
+    	[189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y",  "bg-blue-1"],
+        
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "FLOW",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "EDGX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+    ];
+    var right_data7 = [
+    	[189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        [189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        [189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y",  "bg-blue-1"],
+        
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "FLOW",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "EDGX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+    ];
+    var right_data8= [
+    	
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y",  "bg-blue-1"],
+        
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "FLOW",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "EDGX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.28, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+    ];
+    var right_data9 = [
+    	
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y",  "bg-blue-1"],
+        
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "FLOW",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "EDGX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"], 
+         
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+    ];
+    var right_data10 = [
+    	[189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        [189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        [189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        [189.23, 1, "BYXX",1,getTime(),"Y", "bg-yellow-1"],
+        
+        [189.24, 1, "BYXX",1,getTime(),"Y", "bg-blue-1"],
+        [189.24, 1, "BYXX",1,getTime(),"Y",  "bg-blue-1"],
+        
+        [189.25, 1, "BYXX",1,getTime(),"Y",  "bg-blue-2"],
+       
+        [189.26, 1, "FLOW",1,getTime(),"Y",  "bg-blue-3"],
+        [189.26, 1, "EDGX",1,getTime(),"Y", "bg-blue-3"],
+        [189.26, 1, "BYXX",1,getTime(),"Y", "bg-blue-3"],
+         
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "EDGX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "FLOW",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+        [189.27, 1, "BYXX",1,getTime(),"Y", "bg-blue-4"],
+
+    ];
+    
+    var left_data = [
+    	["Y",getTime(),1,"BYXY",1,  189.29,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDGA",1,  189.29,  "bg-yellow-1"],
+       
+        ["Y",getTime(),7,"BYXX",1,  189.28,  "bg-blue-1"],
+        ["T",getTime(),9.5,"EDGX",2,189.28, "bg-blue-1"],
+        
+        ["K",getTime(),1,"NYSE",1,  189.27,  "bg-blue-2"],
+        ["P",getTime(),2,"EDGA",4,  189.27,  "bg-blue-2"],
+        
+        ["B",getTime(),7,"EDGX",1,  189.26,  "bg-blue-3"],
+        ["J",getTime(),8,"BYXZ",3,  189.26,  "bg-blue-3"],
+        ["P",getTime(),6,"BYXX",1,  189.26,  "bg-blue-3"],
+        ["K",getTime(),9.5,"ARCX",1,189.26, "bg-blue-3"],
+        
+        ["Y",getTime(),9.5,"BYXX",1,189.24,"bg-blue-4"],
+        ["J",getTime(),1 ,"NYSE",1,189.24,"bg-blue-4"],
+        ["P",getTime(),3,"EDGA",1,189.24,"bg-blue-4"],
+        ["US","","","BB",10,189.24,"bg-green-1"],
+        ["B",getTime(),4 ,"NSDQ",1,189.23,"bg-blue-4"],
+        ["T",getTime(),1,"EDGA",1,189.23,"bg-blue-4"],
+         ["Y",getTime(),9.5,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.21,"bg-blue-4"],
+         ["Y",getTime(),9.5,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+    ];
+
+    var left_data1 = [
+    	["Y",getTime(),1,"BYXY",1,  189.29,  "bg-yellow-1"],
+    	
+        ["Y",getTime(),7,"BYXX",1,  189.28,  "bg-blue-1"],
+        ["Y",getTime(),9.5,"ARCX",1, 189.28,  "bg-blue-1"],
+        ["Y",getTime(),9.5,"EDGX",2,189.28,  "bg-blue-1"],
+        
+        ["Y",getTime(),1,"BYXs",1,  189.27,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",4,  189.27,  "bg-blue-2"],
+        
+        ["K",getTime(),8,"BYXZ",3,  189.26,  "bg-blue-3"],
+        ["K",getTime(),8,"NYSE",4,  189.26,  "bg-blue-3"],
+        ["Y",getTime(),9.5,"BYXX",1,189.26, "bg-blue-3"],
+        
+        ["Y",getTime(),9.5,"BYXX",1,189.25,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXA",3,189.24,"bg-blue-4"],
+        ["US","","","BB",10,189.24,"bg-green-1"],
+        ["Y",getTime(),9.5,"BYXX",1,189.24,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",4,189.24,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.24,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.24,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.24,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.21,"bg-blue-4"],
+    ];
+    var left_data2 = [
+    	["Y",getTime(),1,"BYXY",1, 189.29,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDGA",1,  189.29,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDGB",1,  189.29,  "bg-yellow-1"],
+        ["Y",getTime(),7,"BYXX",1,  189.29,  "bg-yellow-1"],
+        
+        ["Y",getTime(),1,"NSDQ",2,  189.28,  "bg-blue-1"],
+        ["J",getTime(),2,"EDGA",1,  189.28,  "bg-blue-1"],
+        
+        ["K",getTime(),8,"BYXZ",1,  189.27,  "bg-blue-2"],
+        ["Y",getTime(),9.5,"BYXX",1,189.27,"bg-blue-2"],
+        
+        ["Y",getTime(),9.5,"BYXX",1,189.26,"bg-blue-3"],
+        ["Y",getTime(),1 ,"BYXX",1,189.26,"bg-blue-3"],
+        
+        ["Y",getTime(),1,"EDGA",1,189.25,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.25,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.25,"bg-blue-4"],
+        ["US","","","BB",10,189.24,"bg-green-1"],
+         ["Y",getTime(),1,"EDGA",1,189.24,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.18,"bg-blue-4"],
+       
+    ];
+    var left_data3 = [
+    	["Y",getTime(),2,"EDGA",1,  189.29,  "bg-yellow-1"],
+        ["J",getTime(),1,"BYXY",1,  189.29,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDGB",1,  189.29,  "bg-yellow-1"],
+        
+        ["Y",getTime(),7,"BYXX",1,  189.28,  "bg-blue-1"],
+        
+        ["Y",getTime(),1,"NSDQ",1,  189.27,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-3"],
+        ["Y",getTime(),1,"BYXX",1,  189.26,  "bg-blue-3"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-3"],
+        
+        ["K",getTime(),8,"BYXZ",1,  189.25,  "bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.25,"bg-blue-4"],
+        
+        ["Y",getTime(),9.5,"BYXX",1,189.24,"bg-blue-4"],
+       ["US","","","BB",10,189.24,"bg-green-1"],
+        ["Y",getTime(),1,"EDGA",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"NSDQ",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.09,"bg-blue-1"],
+    ];
+    var left_data4 = [
+    	["Y",getTime(),1,"BYXS",1,  189.29,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDGA",1, 189.29,  "bg-yellow-1"],
+      //  ["J",getTime(),2,"EDXX",1,  189.29,  "bg-yellow-1"],
+      //  ["J",getTime(),1,"NSDQ",1,  189.29,  "bg-yellow-1"],
+      //  ["J",getTime(),2,"ARCX",1,  189.29,  "bg-yellow-1"],
+       
+        ["Y",getTime(),7,"BYXX",1,  189.28,  "bg-blue-1"],
+        
+        ["Y",getTime(),1,"NSDQ",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        ["Y",getTime(),1,"BYXX",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        
+        ["K",getTime(),8,"BYXZ",1,  189.25,  "bg-blue-3"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.25,"bg-blue-3"],
+        
+        ["Y",getTime(),9.5,"BYXX",1,189.24,"bg-blue-4"],
+        ["Y",getTime(),1 ,"NSDQ",1,189.24,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.24,"bg-blue-4"],
+       ["US","","","BB",10,189.24,"bg-green-1"],
+        ["Y",getTime(),1 ,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"NSDQ",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.18,"bg-blue-4"],
+         ["Y",getTime(),9.5,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.18,"bg-blue-4"],
+      ];  
+      
+      var left_data5 = [
+    	["Y",getTime(),1,"BYXS",1,  189.31,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDGA",1, 189.31,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDXX",1,  189.31,  "bg-yellow-1"],
+        ["J",getTime(),1,"NSDQ",1,  189.31,  "bg-yellow-1"],
+        ["J",getTime(),2,"ARCX",1,  189.31,  "bg-yellow-1"],
+        ["Y",getTime(),7,"BYXX",1,  189.31,  "bg-yellow-1"],
+        
+        ["Y",getTime(),1,"NSDQ",1,  189.29,  "bg-blue-1"],
+        ["J",getTime(),2,"EDGA",1,  189.29,  "bg-blue-1"],
+        
+        ["Y",getTime(),1,"BYXX",1,  189.28,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.28,  "bg-blue-2"],
+        
+        ["K",getTime(),8,"BYXZ",3,  189.26,  "bg-blue-3"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.26,"bg-blue-3"],
+        
+        ["Y",getTime(),9.5,"BYXX",1,189.25,"bg-blue-4"],
+        ["Y",getTime(),1 ,"NSDQ",1,189.25,"bg-blue-4"],
+        ["US","","","BB",10,189.24,"bg-green-1"],
+        ["Y",getTime(),9.5,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"NSDQ",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.18,"bg-blue-4"],
+      ];  
+      
+      var left_data6 = [
+    	["Y",getTime(),1,"BYXS",1,  189.32,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDGA",1, 189.32,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDXX",1,  189.28,  "bg-blue-1"],
+        ["J",getTime(),1,"NSDQ",1,  189.28,  "bg-blue-1"],
+     
+        ["Y",getTime(),1,"NSDQ",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        ["Y",getTime(),1,"BYXX",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        
+        ["K",getTime(),8,"BYXZ",1,  189.25,  "bg-blue-3"],
+        ["US","","","BB",10,189.24,"bg-green-1"],
+        
+        ["Y",getTime(),9.5,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1 ,"NSDQ",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1,"NSDQ",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.18,"bg-blue-4"],
+      ];  
+      var left_data7 = [
+    	["Y",getTime(),1,"BYXS",1,  189.27,  "bg-yellow-1"],
+        ["J",getTime(),2,"EDGA",1, 189.27,  "bg-yellow-1"],
+        
+        ["Y",getTime(),1,"NSDQ",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        ["Y",getTime(),1,"BYXX",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        
+        ["K",getTime(),8,"BYXZ",1,  189.25,  "bg-blue-3"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.25,"bg-blue-3"],
+        ["K",getTime(),8,"BYXZ",1,  189.25,  "bg-blue-3"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.25,"bg-blue-3"],
+        
+        ["US","","","BB",10,189.24,"bg-green-1"],
+        ["Y",getTime(),1 ,"NSDQ",1,189.24,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.24,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"NSDQ",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.18,"bg-blue-4"],
+      ];  
+      var left_data8 = [
+        ["Y",getTime(),2,"EDGA",1,  189.29,  "bg-yellow-1"],
+        ["J",getTime(),1,"BYXY",1,  189.29,  "bg-yellow-1"],
+        
+        ["Y",getTime(),1,"BYXS",1,  189.28,  "bg-blue-1"],
+        ["Y",getTime(),1,"NSDQ",2,  189.28,  "bg-blue-1"],
+        
+        ["J",getTime(),2,"EDGA",4,  189.27,  "bg-blue-2"],
+        ["Y",getTime(),1,"BYXX",1,  189.27,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",3,  189.27,  "bg-blue-2"],
+        ["Y",getTime(),1,"BYXX",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.25,  "bg-blue-3"],
+        
+        ["K",getTime(),8,"BYXZ",1,  189.25,  "bg-blue-3"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.25, "bg-blue-3"],
+        ["K",getTime(),8,"BYXZ",1,  189.24,  "bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.24,"bg-blue-4"],
+        ["US","","","BB",10,189.24,"bg-green-1"],
+        
+        ["Y",getTime(),9.5,"BYXX",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1 ,"NSDQ",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.23,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.23,"bg-blue-4"],
+
+        ["Y",getTime(),1,"NSDQ",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.18,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.18,"bg-blue-4"],
+      ];  
+      var left_data9 = [
+    	["Y",getTime(),2,"EDGA",1,  189.29,  "bg-yellow-1"],
+        ["J",getTime(),1,"BYXY",1,  189.29,  "bg-yellow-1"],
+        
+        ["Y",getTime(),7,"BYXX",1,  189.28,  "bg-blue-1"],
+        ["Y",getTime(),7,"BYXX",1,  189.28,  "bg-blue-1"],
+        
+        ["Y",getTime(),1,"NSDQ",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        ["Y",getTime(),1,"BYXX",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        
+        ["K",getTime(),8,"BYXZ",1,  189.25,  "bg-blue-3"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.25,"bg-blue-3"],
+        
+        ["US","","","BB",10,189.24,"bg-green-1"],
+        ["Y",getTime(),1 ,"NSDQ",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"NSDQ",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.09,"bg-blue-4"],
+    ];
+    
+    var left_data10 = [
+    	["Y",getTime(),2,"EDGA",1,  189.31,  "bg-yellow-1"],
+       
+        
+        ["Y",getTime(),7,"BYXX",1,  189.28,  "bg-blue-1"],
+        
+        ["Y",getTime(),1,"NSDQ",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        ["Y",getTime(),1,"BYXX",1,  189.26,  "bg-blue-2"],
+        ["J",getTime(),2,"EDGA",1,  189.26,  "bg-blue-2"],
+        
+        ["K",getTime(),8,"BYXZ",1,  189.25,  "bg-blue-3"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.25,"bg-blue-3"],
+        ["Y",getTime(),9.5,"BYXX",1,189.24,"bg-blue-4"],
+        ["US",0,0,"BB",10,189.24,"bg-green-1"],
+        ["Y",getTime(),9.5,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1 ,"NSDQ",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.22,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.21,"bg-blue-4"],
+        ["Y",getTime(),1,"NSDQ",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),9.5,"NSDQ",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1 ,"BYXX",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),1,"EDGA",1,189.19,"bg-blue-4"],
+        ["Y",getTime(),9.5,"BYXX",1,189.09,"bg-blue-4"],
+    ];
+    function addNewHeadline()
+      {
+       console.log("going into addNewsHeadLine rowData:");
+        var htmlstring;
+		num_of_ticking_stories++;
+		var parentElement = document.getElementById("gridLeft");   //AllHeadlinesDiv");
+		//clear all rows under grid
+		var i=0;
+	    while(parentElement.firstChild){
+	    	//console.log("counter:",i);
+	    	i++;
+	    	parentElement.removeChild(parentElement.firstChild);
+	    }
+	    console.log("end of remove", parentElement.firstChild);
+		
+		//add 
+		//var theFirstChild = get_firstChild(parentElement);
+		var htmlString = getRowData(num_of_ticking_stories);
+		console.log("htmlString:",htmlString);
+		//parentElement.insertBefore(childDiv,theFirstChild);
+		
+		if(num_of_ticking_stories >= 10){
+		  console.log("**** num_of_ticking_stories:",num_of_ticking_stories);
+		  clearInterval(stories_timer);
+		 }
+       console.log("END");
+    }
+    function getRowData(stories){
+    	console.log("GET ROW DATA",stories);
+    	var i;
+    	var curMin= 11;
+    	var curHour="12:";
+    	var curTime= "12:11";
+    	if (stories==1){
+    	    console.log("*1* num_of_ticking_stories");
+	    for (i = 0;i<left_data.length;i++){
+	        var childDiv = document.createElement("div");
+	        childDiv.setAttribute("class","gridRow "+left_data[i][6]+" "+i);
+	        htmlstring =  "<div class='rowCell'>"+left_data[i][0]+"</div>"
+	     + "<div class='rowCell'>"+newTime+"</div>"
+             + "<div class='rowCell'>"+left_data[i][2]+"</div>"
+             + "<div class='rowCell'>"+left_data[i][3]+"</div>"
+             + "<div class='rowCell'>"+left_data[i][4]+"</div>"
+		     + "<div class='rowCell'>"+left_data[i][5]+"</div>"
+             + "</div>"; 
+	        console.log(i," innterHTML:",childDiv.innerHTML);
+                var previousParent = document.getElementById("gridLeft");
+                previousParent.appendChild(childDiv);
+                childDiv.innerHTML = htmlstring;
+	    }	
+	}
+	else if (stories==2){
+	    for (i = 0;i<left_data1.length;i++){
+		var childDiv = document.createElement("div");
+		childDiv.setAttribute("class","gridRow "+left_data[i][6]+" "+i);
+		htmlstring =  "<div class='rowCell'>"+left_data1[i][0]+"</div>"
+		     + "<div class='rowCell'>"+left_data11[i][1]+"</div>"
+		     + "<div class='rowCell'>"+left_data11[i][2]+"</div>"
+	F	     + "<div class='rowCell'>"+left_data11[i][3]+"</div>"
+		     + "<div class='rowCell'>"+left_data11[i][4]+"</div>"
+		     + "<div class='rowCell'>"+left_data11[i][5]+"</div>"
+		     + "</div>"; 
+		childDiv.innerHTML = htmlstring;
+		document.getElementById("gridLeft").appendChild(childDiv);
+	    }
+	}
+	else {
+	    console.log("*ELSE * num_of_ticking_stories");
+	    for (i = 0;i<left_data3.length;i++){
+		var childDiv = document.createElement("div");
+		childDiv.setAttribute("class","gridRow "+left_data[i][6]+" "+i);
+		htmlstring =  "<div class='rowCell'>"+left_data3[i][0]+"</div>"
+		     + "<div class='rowCell'>"+left_data3[i][1]+"</div>"
+		     + "<div class='rowCell'>"+left_data3[i][2]+"</div>"
+		     + "<div class='rowCell'>"+left_data3[i][3]+"</div>"
+		     + "<div class='rowCell'>"+left_data3[i][4]+"</div>"
+		     + "<div class='rowCell'>"+left_data3[i][5]+"</div>"
+		     + "</div>"; 
+		childDiv.innerHTML = htmlstring;
+		document.getElementById("gridLeft").appendChild(childDiv);
+			}
+	}
+    	return true;
+    }
+    
+    
+    function get_nextChild(parentElement)
+    {
+		var fc = parentElement.firstChild;
+		while(fc.nodeType != 1)
+		{
+		    fc = fc.nextSibling;
+		}
+		return fc;
+    }
+    function get_firstChild(parentElement)
+    {
+		var fc = parentElement.firstChild;
+		while(fc.nodeType != 1)
+		{
+		    fc = fc.nextSibling;
+		}
+		return fc;
+    }
+      
+    function show_ticking_stories(data)
+    {
+	    //stories_timer = setInterval(addNewHeadline(), 1000);
+	    stories_timer = setInterval(function(){addNewHeadline()}, 10000);
+	   // stories_timer1 = setInterval(function(){addTable()}, 10000);
+	    
+    }
+    function insert_new_row() //used
+    {
+	    stories_timer = setInterval(function(){addNewRow()}, 1000);
+	 
+    }
+    function addNewRow() 
+    {
+		num_of_ticking_stories++;
+		//RIGHT
+		var parentElementRight = document.getElementById("gridRight");   //AllHeadlinesDiv");
+		var theFirstChild = get_firstChild(parentElementRight);
+	    //clear all rows under grid
+	    while(parentElementRight.firstChild){
+	    	parentElementRight.removeChild(parentElementRight.firstChild);
+	    }
+	    var side = "right";
+        GdataFileR= whichDataFile(num_of_ticking_stories,side);
+	    insert_first_rowR(parentElementRight,GdataFileR);
+	    
+	    //LEFT
+	    var parentElement = document.getElementById("gridLeft");   //AllHeadlinesDiv");
+		var theFirstChild = get_firstChild(parentElement);
+	    //clear all rows under grid
+	    while(parentElement.firstChild){
+	    	parentElement.removeChild(parentElement.firstChild);
+	    }
+	    var sideL="left";
+        GdataFileL= whichDataFile(num_of_ticking_stories,sideL);
+	    insert_first_rowL(parentElement,GdataFileL);
+	    
+    } 
+    var GdataFileR;  
+    var GdataFileL;
+    function whichDataFile(counter,side){
+	 	var dataFile;
+	 	if (side === "right"){
+		 	if ((counter == 1)||
+		 	    (counter == 4)||
+		 	    (counter == 7)||
+		 	    (counter == 10)||
+		 	    (counter == 13)||
+		 	    (counter == 16)||
+		 	    (counter == 19)||
+		 	    (counter == 22)||
+		 	    (counter == 25) )
+		 	    {
+		 	    	
+		 		dataFile = right_data;
+		 	}
+		 	else if ((counter ==2)||
+		 		     (counter ==5)||
+		 		     (counter ==8)||
+		 		     (counter ==11)||
+		 		     (counter ==14)||
+		 		     (counter ==17)||
+		 		     (counter ==20)||
+		 		     (counter ==23)||
+		 		     (counter ==26))	 {
+		 		dataFile = right_data1;
+		 	}
+		 	else if ((counter ==3)||
+		 			 (counter ==6)||
+		 			 (counter ==9)||
+		 			 (counter ==12)||
+		 			 (counter ==15)||
+		 			 (counter ==18)||
+		 			 (counter ==21)||
+		 			 (counter ==24)||
+		 			 (counter ==27))
+		 	{
+		 		dataFile = right_data2;
+		 	}
+		 	else {
+		 		dataFile = right_data3;
+		 	}
+		}
+	 	else if (side === "left"){
+		 	if ((counter == 1)|| 
+		 	    (counter == 11)|| (counter == 21)||
+		 	    (counter == 21)|| (counter ==31)||
+		 	    (counter ==41)||
+		 	    (counter ==51)||
+		 	    (counter ==61)||
+		 	    (counter ==71)||
+		        (counter ==81)||
+		 	    (counter == 91)) {
+		 		dataFile = left_data;
+		 	}
+		 	else if ((counter ==2)||
+		 		     (counter == 12)||
+		 		     (counter ==22)||
+		 		     (counter ==32)||
+		 		     (counter ==42)||
+		 		     (counter ==52)||
+		 		     (counter ==62)||
+		 		     (counter ==72)||
+		 		     (counter ==82)||
+		 		     (counter ==92)||
+		 		     (counter ==102)) {
+		 		dataFile = left_data1;
+		 	}
+		 	else if ((counter ==3)||
+		 			 (counter ==13)||
+		 			 (counter ==23)||
+		 			 (counter ==33)||
+		 			 (counter ==43)||
+		 			 (counter ==53)||
+		 			 (counter ==63)||
+		 			 (counter ==73)||
+		 			 (counter ==83)||
+		 	         (counter ==93)||
+		 	   	    (counter ==103)||
+		 			 (counter ==113)) {
+		 		dataFile = left_data2;
+		 	}
+		 	else if ( (counter == 4)|| 
+		 	          (counter ==14)||
+		 			  (counter ==24)|| 
+		 			  (counter == 34)||
+		 			  (counter ==44)||
+		 			  (counter ==54)||
+		 			 (counter ==64)||
+		 			 (counter ==74)||
+		 			 (counter ==84)||
+		 			 (counter ==94)||
+		 			 (counter ==104)) {
+		 		dataFile = left_data4;
+		 	} /*      */
+		 	else if ( (counter == 5)|| 
+		 	          (counter ==15)||
+		 			  (counter ==25)|| 
+		 			  (counter == 35)||
+		 			  (counter ==45)||
+		 			  (counter ==55)||
+		 			 (counter ==65)||
+		 			 (counter ==75)||
+		 			 (counter ==85)||
+		 			 (counter ==95)||
+		 			 (counter ==105)) {
+		 		dataFile = left_data5;
+		 	}
+		 	else if ( (counter == 6)|| 
+		 	          (counter ==16)||
+		 			  (counter ==26)|| 
+		 			  (counter == 36)||
+		 			  (counter ==46)||
+		 			  (counter ==56)||
+		 			 (counter ==66)||
+		 			 (counter ==76)||
+		 			 (counter ==86)||
+		 			 (counter ==96)||
+		 			 (counter ==106)) {
+		 		dataFile = left_data6;
+		 	}
+		 	else if ( (counter == 7)|| 
+		 	          (counter ==17)||
+		 			  (counter ==27)|| 
+		 			  (counter == 37)||
+		 			  (counter ==47)||
+		 			  (counter ==57)||
+		 			 (counter ==67)||
+		 			 (counter ==77)||
+		 			 (counter ==87)||
+		 			 (counter ==97)||
+		 			 (counter ==107)) {
+		 		dataFile = left_data7;
+		 	}
+		 	else if ( (counter == 8)|| 
+		 	          (counter ==18)||
+		 			  (counter ==28)|| 
+		 			  (counter == 38)||
+		 			  (counter ==48)||
+		 			  (counter ==58)||
+		 			 (counter ==68)||
+		 			 (counter ==78)||
+		 			 (counter ==88)||
+		 			 (counter ==98)||
+		 			 (counter ==108)) {
+		 		dataFile = left_data8;
+		 	}
+		 	else if ( (counter == 9)|| 
+		 	          (counter ==19)||
+		 			  (counter ==29)|| 
+		 			  (counter == 39)||
+		 			  (counter ==49)||
+		 			  (counter ==59)||
+		 			 (counter ==69)||
+		 			 (counter ==79)||
+		 			 (counter ==89)||
+		 			 (counter ==99)||
+		 			 (counter ==109)) {
+		 		dataFile = left_data9;
+		 	}
+		 	else if ( (counter == 10)|| 
+		 	          (counter ==20)||
+		 			  (counter ==30)|| 
+		 			  (counter == 40)||
+		 			  (counter ==50)||
+		 			  (counter ==60)||
+		 			 (counter ==70)||
+		 			 (counter ==80)||
+		 			 (counter ==90)||
+		 			 (counter ==100)||
+		 			 (counter ==110)) {
+		 		dataFile = left_data10;
+		 	}
+		 	else {
+		 		dataFile = left_data3;
+		 	}
+		 	
+		 	
+		}
+	 	return dataFile;
+	 }
+    
+    var GfrozenRowR = [];
+    var GfrozenRowL = [];
+    var GRowR = -1;
+	var GRowL= -1;
+	var GexchangeL;
+    var GtotalL;
+    var GmmkrL;
+    var GsizeL;
+    var GbidL;
+    var Gbgcolor;
+    var GbgcolorGreen=false;
+    var Gcounter = 0;
+    var GnewTime = getTime();
+    function getTime(){
+        var date = new Date();
+        var time = "";
+		var hours = date.getHours();
+        if (hours < 10) {
+        	hours = '0'+hours
+        }
+	    var minutes = date.getMinutes();
+	   if (minutes < 10) {
+	  	    minutes = '0'+minutes
+	   }
+       time = hours +":"+minutes;
+       return time;
+    }
+    
+    function insert_first_rowR(parentDiv,data){
+        
+	    for (var i = 0; i<data.length;i++){
+	        var childDiv = document.createElement("div");
+	        
+            if ((GRowR >=1) && (GRowR==i)){
+             childDiv.setAttribute("class","gridRow bg-lightblue-1");
+                htmlstring =  "<div class='rowCell'>"+GfrozenRowR[2]+"</div>"
+		     + "<div class='rowCell'>"+GfrozenRowR[3]+"</div>"
+		     + "<div class='rowCell'>"+GfrozenRowR[4]+"</div>"
+		     + "<div class='rowCell'>"+GfrozenRowR[5]+"</div>"
+		     + "<div class='rowCell'>"+GfrozenRowR[6]+"</div>"
+		     + "<div class='rowCell'>"+GfrozenRowR[7]+"</div>"
+		     + "</div>";
+             }
+             else{
+                childDiv.setAttribute("class","gridRow "+data[i][6]);
+                htmlstring =  "<div class='rowCell'>"+data[i][0]+"</div>"
+		     + "<div class='rowCell'>"+data[i][1]+"</div>"
+		     + "<div class='rowCell'>"+data[i][2]+"</div>"
+		     + "<div class='rowCell'>"+data[i][3]+"</div>"
+		     + "<div class='rowCell'>"+data[i][4]+"</div>"
+		     + "<div class='rowCell'>"+data[i][5]+"</div>"
+		     + "</div>"; 
+		 
+		     	childDiv.setAttribute("onclick", "mdmMouseDownR("+i+",childDiv)");
+             }  
+              
+	         parentDiv.appendChild(childDiv);
+	         childDiv.innerHTML = htmlstring;
+         }
+    }
+    var GchildDiv = null;
+    function insert_first_rowL(parentDiv,data){
+    	    for (var i = 0; i<data.length;i++){
+	        var childDiv = document.createElement("div");
+	        GchildDiv = childDiv;
+            if ((GRowL >=0) && (GRowL ==i)){
+                childDiv.setAttribute("class","gridRow bg-white-1");
+	             
+	             childDiv.setAttribute("color","RBGA(163,194,255,.50)");
+	             htmlstring =  "<div class='rowCell'>"+GfrozenRowL[2]+"</div>"
+				     + "<div class='rowCell'>"+GfrozenRowL[3]+"</div>"
+				     + "<div class='rowCell'>"+GfrozenRowL[4]+"</div>"
+				     + "<div class='rowCell'>"+GfrozenRowL[5]+"</div>"
+				     + "<div class='rowCell'>"+GfrozenRowL[6]+"</div>"
+				     + "<div class='rowCell'>"+GfrozenRowL[7]+"</div>"
+				     + "</div>";
+				    
+				    console.log ("REMOVE HIGHLIGHT");
+		            if (document.body.addEventListener){
+		            	console.log("hello1");
+		            	document.body.addEventListener("onmouseover",removeHighlight);
+		            }
+		            else {console.log("hello2");
+		            	document.body.addEventListener("onmouseover",removeHighlight);
+		            }
+				    // childDiv.setAttribute("onmouseover",  "removeHighlight(" +i+ ", childDiv, parentDiv, "+GfrozenRowL[8]+");");
+				   // childDiv.onmouseover = function(){
+				   // 	removeHighlight(i , childDiv, parentDiv,GfrozenRowL[8] );
+				   // }
+				 }
+             else{             
+	             if (( i < GRowL) && ( data[i][5]<GbidL ) && (GRowL == 2) && (i==2))
+	             	{   
+                	    childDiv.setAttribute("class","gridRow bg-black-1");
+	                    childDiv.style.backgroundColor = "#000000" ;
+		                childDiv.style.color = "#000000" ;
+		                htmlstring =  "<div class='rowCell'>"+" "+"</div>"
+					     + "<div class='rowCell'>"+" x"+"</div>"
+					     + "<div class='rowCell'>"+" x"+"</div>"
+					     + "<div class='rowCell'>"+" x"+"</div>"
+					     + "<div class='rowCell'>"+" x"+"</div>"
+					     + "<div class='rowCell'>"+" x"+"</div>"
+					     + "</div>"; 
+					     console.log("b");
+			            childDiv.setAttribute("onclick", "mdmMouseDownL("+i+")");
+	             	}
+	             	else if (( i < GRowL) && ( data[i][5]< GbidL ))
+	             	{   
+                	    childDiv.setAttribute("class","gridRow bg-black-1");
+		                htmlstring =  "<div class='rowCell'>"+" x"+"</div>"
+					     + "<div class='rowCell'>"+" x1"+"</div>"
+					     + "<div class='rowCell'>"+" x1"+"</div>"
+					     + "<div class='rowCell'>"+" x1"+"</div>"
+					     + "<div class='rowCell'>"+" x1"+"</div>"
+					     + "<div class='rowCell'>"+" x1"+"</div>"
+					     + "</div>"; 
+			             childDiv.setAttribute("onclick", "mdmMouseDownL("+i+")");
+	             	}
+                    else if (( i > GRowL) && ( data[i][5]> GbidL ))
+	             	{   
+                	    childDiv.setAttribute("class","gridRow bg-blue-1");
+		                htmlstring =  "<div class='rowCell'>"+data[i][0]+"</div>"
+					     + "<div class='rowCell'>"+data[i][1]+"</div>"
+					     + "<div class='rowCell'>"+data[i][2]+"</div>"
+					     + "<div class='rowCell'>"+data[i][3]+"</div>"
+					     + "<div class='rowCell'>"+data[i][4]+"</div>"
+					     + "<div class='rowCell'>"+GbidL+"</div>"
+					     + "</div>"; 
+			             childDiv.setAttribute("onclick", "mdmMouseDownL("+i+")");
+	             	} 
+	             	else if ((data[i][6]==="bg-green-1") && (GbgcolorGreen == true)){
+	             		childDiv.setAttribute("class","gridRow "+data[i-1][6]);
+		                htmlstring =  "<div class='rowCell'>"+data[i][0]+"</div>"
+					     + "<div class='rowCell'>"+data[i][1]+"</div>"
+					     + "<div class='rowCell'>"+data[i][2]+"</div>"
+					     + "<div class='rowCell'>"+data[i][3]+"</div>"
+					     + "<div class='rowCell'>"+data[i][4]+"</div>"
+					     + "<div class='rowCell'>"+GbidL+"</div>"
+					     + "</div>"; 
+			             childDiv.setAttribute("onclick", "mdmMouseDownL("+i+")");
+	             	}
+	                else{
+	             	    childDiv.setAttribute("class","gridRow "+data[i][6]);
+	                    htmlstring =  "<div class='rowCell'>"+data[i][0]+"</div>"
+					     + "<div class='rowCell'>"+data[i][1]+"</div>"
+					     + "<div class='rowCell'>"+data[i][2]+"</div>"
+					     + "<div class='rowCell'>"+data[i][3]+"</div>"
+					     + "<div class='rowCell'>"+data[i][4]+"</div>"
+					     + "<div class='rowCell'>"+data[i][5]+"</div>"
+					     + "</div>"; 
+				                 
+			    		childDiv.setAttribute("onclick", "mdmMouseDownL("+i+")");	
+	             	}
+	             }
+	             
+	         parentDiv.appendChild(childDiv);
+	         childDiv.innerHTML = htmlstring;
+         }
+         Gcounter++;
+    }
+    function removeHighlight(row, childDiv, parentDiv, bgcolor ){
+		console.log ("REMOVE HIGHLIGHT",row);
+		var childDivTemp = document.getElementById(childDiv);
+		var parentDivTemp = document.getElementById(parentDiv);
+		childDivTemp.setAttribute("class","gridRow "+bgcolor);
+		parentDivTemp.appendChild(childDivTemp);
+		
+	}
+    function mdmMouseDownL(row){
+    	console.log("MOUSE DOWN:",row);
+    	GRowL = row;
+    	
+    	GfrozenRowL[0]= "bg-white-1"
+    	GfrozenRowL[1]= row;
+    	GfrozenRowL[2]= GdataFileL[row][0];
+    	GfrozenRowL[3]= GnewTime;
+    	GfrozenRowL[4]= GdataFileL[row][2];
+    	GfrozenRowL[5]= GdataFileL[row][3];
+    	GfrozenRowL[6]= GdataFileL[row][4];
+    	GfrozenRowL[7]= GdataFileL[row][5];
+    	GfrozenRowL[8]= GdataFileL[row][6];
+    	
+        GexchangeL = GdataFileL[row][0];
+        GtotalL = GdataFileL[row][2];
+        GmmkrL = GdataFileL[row][3];
+        GsizeL = GdataFileL[row][4];
+        GbidL = GdataFileL[row][5];
+        if (GdataFileL[row][6]==="bg-green-1"){
+        	GbgcolorGreen = true;
+        }
+        Gbgcolor =GdataFileL[row][6];
+              
+    }
+    function mdmMouseDownR(row){
+    	console.log("MOUSE DOWN:",row);
+    	GRowR = row;
+    	
+    	GfrozenRowR[0]= "bg-white-1"
+    	GfrozenRowR[1]= row;
+    	GfrozenRowR[2]= GdataFileR[row][0];
+    	GfrozenRowR[3]= GdataFileR[row][1];
+    	GfrozenRowR[4]= GdataFileR[row][2];
+    	GfrozenRowR[5]= GdataFileR[row][3];
+    	GfrozenRowR[6]= GdataFileR[row][4];
+    	GfrozenRowR[7]= GdataFileR[row][5];
+    	GfrozenRowR[8]= GdataFileR[row][6];
+    	
+    }
+  
+    </script>
+</html>

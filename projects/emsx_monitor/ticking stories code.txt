@@ -1,0 +1,68 @@
+else if(this.id === 'LeftNavOnOverlay')
+      {
+	$("#LeftNavBar").hide();
+	$("#TopicBottomTabs").hide();
+	$("#TopicTopTabs").hide();
+	//here prepend a child element
+	var parentElement = document.getElementById("NewsStoriesDiv");
+	var theFirstChild = get_firstChild(parentElement);
+	console.log("firstChild = ", theFirstChild);
+	
+	var newElement = document.createElement("div");
+	newElement.setAttribute('id','OverlayLeftNavButton');
+	newElement.style.height = '20px';
+	newElement.style.width = '100px';
+	//newElement.style.backgroundColor = 'red';
+	newElement.style.backgroundImage = '-webkit-linear-gradient(top, rgb(91,91,91),rgb(78,78,78))';
+	newElement.innerHTML = 'Worldwide';
+	newElement.style.border = '1px solid black';
+	newElement.style.borderRadius = '3px';
+	newElement.style.color = 'white';
+	newElement.style.textAlign = 'center';
+	newElement.style.fontSize = '14px';
+	newElement.style.paddingTop = '2px';
+	
+	parentElement.insertBefore(newElement,theFirstChild);
+	
+	$("#ViewMenu").hide();
+      }
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>A script on this page starts this clock:</p>
+<p id="demo"></p>
+<button onclick="myStopFunction()">Stop time</button>
+
+<script>
+var myVar=setInterval(function(){myTimer()},1000);
+function myTimer()
+{
+var d=new Date();
+var t=d.toLocaleTimeString();
+document.getElementById("demo").innerHTML=t;
+}
+function myStopFunction()
+{
+clearInterval(myVar);
+}
+</script>
+
+</body>
+</html>
+
+
+
+// HTML string
+var s = '<li>text</li>';
+var htmlstring = '<div class="StoryHeadline Type1" style="Margin-top:8px;">
+		  <div class="NumGo">0)</div>
+		  <div class="Headline">New Ticking Story</div>
+		</div>'
+
+var div = document.createElement('div');
+//div.innerHTML = htmlstring;
+div.html(htmlstring);
+parentElement.insertBefore(div,theFirstChild);
